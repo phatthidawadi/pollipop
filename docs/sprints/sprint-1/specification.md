@@ -23,3 +23,4 @@ The complete engineering contract suite for **Sprint 1** (comprising feature-lev
 | **F-02** | Survey Creation (`SINGLE_CHOICE`, `RATING`), Listing & Lifecycle (`DRAFT` $\rightarrow$ `PUBLISHED` $\rightarrow$ `CLOSED`) | Student 2 (ปทิตญา แก้ววิเชียร - 67070505220) | Student 1 (ภัทร์ธิดาวดี อุ่นคำ - 67070505225) | `AC-09`..`AC-19`, `AC-35` | `TEST-09`..`TEST-19`, `TEST-35`, `TEST-40` |
 | **F-03** | Validated Response Submission (`IDENTIFIED` / `ANONYMOUS`) & Own Response View (`GET /api/responses/:id`) | Student 1 (ภัทร์ธิดาวดี อุ่นคำ - 67070505225) | Student 2 (ปทิตญา แก้ววิเชียร - 67070505220) | `AC-20`..`AC-29`, `AC-36` | `TEST-20`..`TEST-29`, `TEST-36`, `TEST-37`, `TEST-40` |
 | **F-04** | Survey Aggregate Summary & Results Dashboard (`GET /api/surveys/:id/summary`) | Student 2 (ปทิตญา แก้ววิเชียร - 67070505220) | Student 1 (ภัทร์ธิดาวดี อุ่นคำ - 67070505225) | `AC-30`..`AC-34` | `TEST-30`..`TEST-34`, `TEST-40` |
+
