@@ -63,11 +63,11 @@ app.post('/api/auth/login', async (req, res) => {
     where: { email: email.toLowerCase() },
   });
 
-  if (!user) {
+  if (!user || !user.isActive) {
     return res.status(401).json({
       error: {
         code: 'INVALID_CREDENTIALS',
-        message: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
+        message: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง หรือบัญชีถูกระงับการใช้งาน',
       },
     });
   }
@@ -124,8 +124,36 @@ app.post('/api/auth/logout', async (req, res) => {
   if (sessionId) {
     await prisma.session.deleteMany({ where: { id: sessionId } });
   }
-  res.clearCookie(SESSION_COOKIE_NAME, { path: '/' });
+  res.clearCookie(SESSION_COOKIE_NAME, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+  });
   return res.status(200).json({
     message: 'ออกจากระบบสำเร็จ',
+  });
+});
+
+// NFR-04: Global Standardized Error Handling Middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  setNoStoreHeaders(res);
+
+  // Handle JSON Syntax Error (Malformed Payload)
+  if (err instanceof SyntaxError && 'status' in err && (err as any).status === 400 && 'body' in err) {
+    return res.status(400).json({
+      error: {
+        code: 'BAD_REQUEST',
+        message: 'รูปแบบ JSON ไม่ถูกต้อง (Malformed JSON payload)',
+      },
+    });
+  }
+
+  console.error('Unhandled server error:', err);
+  return res.status(500).json({
+    error: {
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'เกิดข้อผิดพลาดภายในระบบ กรุณาลองใหม่อีกครั้ง',
+    },
   });
 });

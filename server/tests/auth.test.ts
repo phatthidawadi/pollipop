@@ -44,6 +44,22 @@ describe('F-01: Authentication, Session & Access Tests (TEST-01 to TEST-06, TEST
       .send({ email: 'nobody@pollipop.local', password: DEMO_PASSWORD });
     expect(unknownUser.status).toBe(401);
     expect(unknownUser.body.error.code).toBe('INVALID_CREDENTIALS');
+
+    // Inactive user login rejection
+    await prisma.user.update({
+      where: { email: 'student2@pollipop.local' },
+      data: { isActive: false },
+    });
+    const inactiveLogin = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'student2@pollipop.local', password: DEMO_PASSWORD });
+    expect(inactiveLogin.status).toBe(401);
+    expect(inactiveLogin.body.error.code).toBe('INVALID_CREDENTIALS');
+    // Restore active state
+    await prisma.user.update({
+      where: { email: 'student2@pollipop.local' },
+      data: { isActive: true },
+    });
   });
 
   it('TEST-03 / AC-03: Invalid login payload returns 400 Bad Request with VALIDATION_ERROR', async () => {

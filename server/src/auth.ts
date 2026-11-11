@@ -47,7 +47,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     });
 
     if (!session) {
-      res.clearCookie(SESSION_COOKIE_NAME, { path: '/' });
+      res.clearCookie(SESSION_COOKIE_NAME, { httpOnly: true, sameSite: 'lax', path: '/' });
       return res.status(401).json({
         error: {
           code: 'UNAUTHORIZED',
@@ -56,9 +56,20 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
       });
     }
 
+    if (!session.user.isActive) {
+      await prisma.session.deleteMany({ where: { userId: session.user.id } });
+      res.clearCookie(SESSION_COOKIE_NAME, { httpOnly: true, sameSite: 'lax', path: '/' });
+      return res.status(401).json({
+        error: {
+          code: 'ACCOUNT_DISABLED',
+          message: 'บัญชีผู้ใช้นี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ',
+        },
+      });
+    }
+
     if (session.expiresAt.getTime() < Date.now()) {
       await prisma.session.deleteMany({ where: { id: sessionId } });
-      res.clearCookie(SESSION_COOKIE_NAME, { path: '/' });
+      res.clearCookie(SESSION_COOKIE_NAME, { httpOnly: true, sameSite: 'lax', path: '/' });
       return res.status(401).json({
         error: {
           code: 'UNAUTHORIZED',
