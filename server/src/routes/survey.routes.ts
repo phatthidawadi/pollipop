@@ -112,9 +112,9 @@ surveyRouter.get('/', requireAuth, async (req: Request, res: Response) => {
 
       return res.status(200).json(result);
     } else {
-      // RESPONDENT: only PUBLISHED surveys with participation annotation (AC-18 / DEC-06)
+      // RESPONDENT: PUBLISHED and CLOSED surveys with participation annotation (AC-18 / DEC-06)
       const surveys = await prisma.survey.findMany({
-        where: { status: 'PUBLISHED' },
+        where: { status: { in: ['PUBLISHED', 'CLOSED'] } },
         include: {
           participations: {
             where: { userId: currentUser.id },
@@ -259,6 +259,7 @@ surveyRouter.post('/:id/publish', requireAuth, requireRole('OWNER'), async (req:
       where: { id },
       data: {
         status: 'PUBLISHED',
+        publishedAt: new Date(),
       },
       include: {
         questions: {
@@ -322,6 +323,7 @@ surveyRouter.post('/:id/close', requireAuth, requireRole('OWNER'), async (req: R
       where: { id },
       data: {
         status: 'CLOSED',
+        closedAt: new Date(),
       },
       include: {
         questions: {
@@ -342,3 +344,4 @@ surveyRouter.post('/:id/close', requireAuth, requireRole('OWNER'), async (req: R
     });
   }
 });
+

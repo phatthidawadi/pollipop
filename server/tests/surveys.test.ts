@@ -208,6 +208,8 @@ describe('Feature F-02: Survey Creation, Listing & Lifecycle Management (TEST-09
       .set('Cookie', owner1Cookie);
     expect(publishRes.status).toBe(200);
     expect(publishRes.body.status).toBe('PUBLISHED');
+    expect(publishRes.body.publishedAt).toBeDefined();
+    expect(new Date(publishRes.body.publishedAt).toISOString()).toBe(publishRes.body.publishedAt);
 
     // TEST-15 / AC-15: Repeating publish on already PUBLISHED survey returns 409 Conflict
     const repeatPublishRes = await request(app)
@@ -302,6 +304,8 @@ describe('Feature F-02: Survey Creation, Listing & Lifecycle Management (TEST-09
       .set('Cookie', owner1Cookie);
     expect(closeRes.status).toBe(200);
     expect(closeRes.body.status).toBe('CLOSED');
+    expect(closeRes.body.closedAt).toBeDefined();
+    expect(new Date(closeRes.body.closedAt).toISOString()).toBe(closeRes.body.closedAt);
 
     // Repeating close on already CLOSED survey -> 409 Conflict
     const repeatCloseRes = await request(app)
@@ -311,3 +315,4 @@ describe('Feature F-02: Survey Creation, Listing & Lifecycle Management (TEST-09
     expect(repeatCloseRes.body.error.code).toBe('INVALID_STATE_TRANSITION');
   });
 });
+
