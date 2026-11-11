@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from './prisma';
 import { requireAuth, setNoStoreHeaders, SESSION_COOKIE_NAME, SESSION_TTL_MS } from './auth';
 import { loginSchema, formatZodError } from './validation';
+import { surveyRouter } from './routes/survey.routes';
 
 export const app = express();
 
@@ -134,6 +135,9 @@ app.post('/api/auth/logout', async (req, res) => {
     message: 'ออกจากระบบสำเร็จ',
   });
 });
+
+// F-02: Survey Creation, Listing & Lifecycle Management Routes
+app.use('/api/surveys', surveyRouter);
 
 // NFR-04: Global Standardized Error Handling Middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
