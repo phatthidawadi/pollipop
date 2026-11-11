@@ -14,7 +14,9 @@ model User {
   passwordHash   String
   role           String                // "OWNER" | "RESPONDENT"
   department     String                @default("CPE")
+  isActive       Boolean               @default(true)
   createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
   sessions       Session[]
   ownedSurveys   Survey[]              @relation("SurveyOwner")
   participations SurveyParticipation[]
@@ -29,6 +31,7 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([expiresAt])
 }
 
 model Survey {

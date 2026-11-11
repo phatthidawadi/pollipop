@@ -5,7 +5,7 @@ export default defineConfig({
     environment: 'node',
     globals: true,
     fileParallelism: false,
-    include: ['tests/**/*.test.ts'],
+    include: ['tests/**/*.test.ts', 'tests/*.test.ts', 'src/**/*.test.ts'],
     env: {
       NODE_ENV: 'test',
       DATABASE_URL: 'file:./test.db',
