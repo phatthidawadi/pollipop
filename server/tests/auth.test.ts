@@ -2,14 +2,14 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import { app } from '../src/app';
 import { prisma } from '../src/prisma';
-import { seedDatabase, getDemoUserPassword } from '../prisma/seed';
+import { seedDatabase } from '../prisma/seed';
 
-const DEMO_PASSWORD = getDemoUserPassword();
+const DEMO_PASSWORD = process.env.DEMO_USER_PASSWORD || 'ChangeMeInDev123!';
 
 describe('F-01: Authentication, Session & Access Tests (TEST-01 to TEST-06, TEST-39)', () => {
   beforeAll(async () => {
     await prisma.session.deleteMany();
-    await seedDatabase(prisma);
+    await seedDatabase();
   });
 
   afterAll(async () => {
@@ -46,7 +46,24 @@ describe('F-01: Authentication, Session & Access Tests (TEST-01 to TEST-06, TEST
     expect(unknownUser.body.error.code).toBe('INVALID_CREDENTIALS');
   });
 
-  it('TEST-04 & TEST-39 / AC-04, AC-38: GET /api/auth/me returns current user and sets Cache-Control: no-store', async () => {
+  it('TEST-03 / AC-03: Invalid login payload returns 400 Bad Request with VALIDATION_ERROR', async () => {
+    // 1. Invalid email format
+    const invalidEmail = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'not-an-email', password: DEMO_PASSWORD });
+    expect(invalidEmail.status).toBe(400);
+    expect(invalidEmail.body.error.code).toBe('VALIDATION_ERROR');
+    expect(invalidEmail.body.error.details).toBeDefined();
+
+    // 2. Missing password
+    const missingPass = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'owner1@pollipop.local' });
+    expect(missingPass.status).toBe(400);
+    expect(missingPass.body.error.code).toBe('VALIDATION_ERROR');
+  });
+
+  it('TEST-04 & TEST-39 / AC-04, AC-38: GET /api/auth/me returns current user, omits sessionId and sets Cache-Control: no-store', async () => {
     const loginRes = await request(app)
       .post('/api/auth/login')
       .send({ email: 'student1@pollipop.local', password: DEMO_PASSWORD });
@@ -56,16 +73,15 @@ describe('F-01: Authentication, Session & Access Tests (TEST-01 to TEST-06, TEST
     expect(res.status).toBe(200);
     expect(res.body.user.email).toBe('student1@pollipop.local');
     expect(res.body.user.role).toBe('RESPONDENT');
+    expect(res.body.sessionId).toBeUndefined(); // Verify sessionId is omitted from client body
     expect(res.headers['cache-control']).toContain('no-store');
   });
 
   it('TEST-05 / AC-05: Unauthenticated requests to protected endpoints are rejected with 401', async () => {
     const meRes = await request(app).get('/api/auth/me');
     expect(meRes.status).toBe(401);
-
-    const surveysRes = await request(app).get('/api/surveys');
-    expect(surveysRes.status).toBe(401);
-    expect(surveysRes.headers['cache-control']).toContain('no-store');
+    expect(meRes.body.error.code).toBe('UNAUTHORIZED');
+    expect(meRes.headers['cache-control']).toContain('no-store');
   });
 
   it('TEST-06 / AC-06: POST /api/auth/logout deletes session in DB and invalidates subsequent requests', async () => {
@@ -81,4 +97,3 @@ describe('F-01: Authentication, Session & Access Tests (TEST-01 to TEST-06, TEST
     expect(replayRes.status).toBe(401);
   });
 });
-

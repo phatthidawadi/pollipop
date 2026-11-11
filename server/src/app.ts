@@ -114,7 +114,6 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/auth/me', requireAuth, (req, res) => {
   return res.status(200).json({
     user: req.user,
-    sessionId: req.sessionId,
   });
 });
 
