@@ -10,7 +10,7 @@
     "test": "npm --prefix server test",
     "test:server": "npm --prefix server test",
     "test:client": "npm --prefix client test",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test -c e2e/playwright.config.ts",
     "prisma:migrate": "npm --prefix server run prisma:migrate",
     "prisma:seed": "npm --prefix server run prisma:seed",
     "prisma:studio": "npm --prefix server run prisma:studio"
