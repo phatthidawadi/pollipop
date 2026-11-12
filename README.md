@@ -71,10 +71,11 @@ npm --prefix server install
 npm run prisma:migrate
 npm run prisma:seed
 
-# 4. Start local development servers
-npm run dev
+# 4. Start local development servers (Server & Client concurrently)
+npm run dev:all
 
 # 5. Run full automated test suite
+npm test              # Runs 45 Vitest unit and API integration tests (Server & Client)
 npm run test:server   # Runs 38 Vitest unit and API integration tests
 npm run test:client   # Runs 7 Vitest frontend tests
 npm run test:e2e      # Runs Playwright full vertical slice E2E test (TEST-40)
