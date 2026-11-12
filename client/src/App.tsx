@@ -25,7 +25,7 @@ export const Navbar: React.FC = () => {
         to={user ? (user.role === 'OWNER' ? '/owner/surveys' : '/surveys') : '/login'}
         className="brand"
       >
-        <span>🍭 Pollipop</span>
+        <span>Pollipop</span>
         <span style={{ fontSize: '0.85rem', fontWeight: 400, opacity: 0.9 }}>
           ระบบแบบสอบถามและประเมินผลมหาวิทยาลัย
         </span>
@@ -88,7 +88,7 @@ const LoginPage: React.FC = () => {
   return (
     <div className="container" style={{ maxWidth: 460, marginTop: '3.5rem' }}>
       <div className="card">
-        <h2 style={{ marginTop: 0 }}>เข้าสู่ระบบ Pollipop 🍭</h2>
+        <h2 style={{ marginTop: 0 }}>เข้าสู่ระบบ Pollipop</h2>
         <p style={{ color: '#64748b', fontSize: '0.92rem' }}>
           กรุณาเข้าสู่ระบบด้วยบัญชีอาจารย์ผู้สร้างแบบสอบถาม (OWNER) หรือนักศึกษาผู้ตอบแบบสอบถาม (RESPONDENT)
         </p>
@@ -742,7 +742,7 @@ const TakeSurveyPage: React.FC = () => {
 
         {submittedResponse ? (
           <div className="alert-success" data-testid="submit-success">
-            <h3 style={{ marginTop: 0 }}>ส่งคำตอบแบบสอบถามสำเร็จ! 🎉</h3>
+            <h3 style={{ marginTop: 0 }}>ส่งคำตอบแบบสอบถามสำเร็จ!</h3>
             <p>รหัสการส่งคำตอบของคุณ: {submittedResponse.id}</p>
             <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.75rem' }}>
               {survey.mode === 'IDENTIFIED' && (
@@ -976,7 +976,7 @@ const SurveySummaryPage: React.FC = () => {
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <span>{opt.text}</span>
                         <strong>
-                          {opt.count} คน ({opt.percentage}%)
+                          {opt.count} คน ({typeof opt.percentage === 'number' ? opt.percentage.toFixed(2) : opt.percentage}%)
                         </strong>
                       </div>
                       <div className="progress-track">
@@ -993,9 +993,50 @@ const SurveySummaryPage: React.FC = () => {
                   <p style={{ fontSize: '1.15rem' }}>
                     ค่าเฉลี่ยคะแนน (Average Rating):{' '}
                     <strong data-testid={`avg-rating-${idx}`}>
-                      {q.averageRating !== null ? `${q.averageRating} / 5.00` : 'ยังไม่มีผู้ตอบ'}
+                      {typeof q.averageRating === 'number'
+                        ? `${q.averageRating.toFixed(2)} / 5.00`
+                        : 'ยังไม่มีผู้ตอบ'}
                     </strong>
                   </p>
+                  {q.distribution && (
+                    <div style={{ marginTop: '0.75rem' }}>
+                      <div style={{ fontWeight: 600, marginBottom: '0.5rem', color: '#475569' }}>
+                        การแจกแจงความถี่คะแนน (Rating Distribution):
+                      </div>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
+                          gap: '0.5rem',
+                        }}
+                      >
+                        {[1, 2, 3, 4, 5].map((score) => {
+                          const count = q.distribution[score] ?? 0;
+                          const pct = q.totalAnswered > 0 ? (count / q.totalAnswered) * 100 : 0;
+                          return (
+                            <div
+                              key={score}
+                              style={{
+                                background: '#f8fafc',
+                                border: '1px solid #e2e8f0',
+                                borderRadius: '6px',
+                                padding: '0.5rem',
+                                textAlign: 'center',
+                              }}
+                            >
+                              <div style={{ fontWeight: 600, color: '#334155' }}>{score} ดาว</div>
+                              <div style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0.2rem 0' }}>
+                                {count} คน
+                              </div>
+                              <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                                ({pct.toFixed(2)}%)
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -1010,7 +1051,10 @@ const SurveySummaryPage: React.FC = () => {
   );
 };
 
-const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
+const ProtectedRoute: React.FC<{
+  children: React.ReactElement;
+  allowedRole?: 'OWNER' | 'RESPONDENT';
+}> = ({ children, allowedRole }) => {
   const { user, loading } = useAuth();
   if (loading) {
     return (
@@ -1021,6 +1065,9 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }
   }
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+  if (allowedRole && user.role !== allowedRole) {
+    return <Navigate to={user.role === 'OWNER' ? '/owner/surveys' : '/surveys'} replace />;
   }
   return children;
 };
@@ -1034,7 +1081,7 @@ export const App: React.FC = () => {
         <Route
           path="/owner/surveys"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRole="OWNER">
               <OwnerDashboardPage />
             </ProtectedRoute>
           }
@@ -1042,7 +1089,7 @@ export const App: React.FC = () => {
         <Route
           path="/owner/surveys/new"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRole="OWNER">
               <CreateSurveyPage />
             </ProtectedRoute>
           }
@@ -1050,7 +1097,7 @@ export const App: React.FC = () => {
         <Route
           path="/owner/surveys/:id/summary"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRole="OWNER">
               <SurveySummaryPage />
             </ProtectedRoute>
           }
@@ -1058,7 +1105,7 @@ export const App: React.FC = () => {
         <Route
           path="/surveys"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRole="RESPONDENT">
               <RespondentSurveyListPage />
             </ProtectedRoute>
           }
@@ -1066,7 +1113,7 @@ export const App: React.FC = () => {
         <Route
           path="/surveys/:id"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRole="RESPONDENT">
               <TakeSurveyPage />
             </ProtectedRoute>
           }
@@ -1074,7 +1121,7 @@ export const App: React.FC = () => {
         <Route
           path="/responses/:id"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRole="RESPONDENT">
               <ViewResponsePage />
             </ProtectedRoute>
           }

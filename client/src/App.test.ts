@@ -50,15 +50,36 @@ describe('Feature F-01..F-04: Client UI Architecture & Logic Tests (Issue #9)', 
     expect(getBadgeClass('CLOSED')).toBe('badge-closed');
   });
 
-  it('Summary Formatting: formats average rating to 2 decimal places or placeholder', () => {
+  it('Summary Formatting: formats average rating and percentages to 2 decimal places and handles rating distribution', () => {
     const formatAverageRating = (rating: number | null) => {
       if (rating === null || rating === undefined) return 'ยังไม่มีคะแนน';
       return `${rating.toFixed(2)} / 5.00`;
     };
 
+    const formatPercentage = (pct: number) => `${pct.toFixed(2)}%`;
+
     expect(formatAverageRating(4.5)).toBe('4.50 / 5.00');
     expect(formatAverageRating(5)).toBe('5.00 / 5.00');
     expect(formatAverageRating(null)).toBe('ยังไม่มีคะแนน');
+    expect(formatPercentage(50)).toBe('50.00%');
+    expect(formatPercentage(33.3333)).toBe('33.33%');
+
+    const distribution = { 1: 0, 2: 1, 3: 1, 4: 2, 5: 1 };
+    const total = Object.values(distribution).reduce((a, b) => a + b, 0);
+    expect(total).toBe(5);
+    expect(formatPercentage((distribution[4] / total) * 100)).toBe('40.00%');
+  });
+
+  it('Role-Based Route Guarding: guards against unauthorized role access to endpoints', () => {
+    const isAccessAllowed = (userRole: 'OWNER' | 'RESPONDENT', allowedRole?: 'OWNER' | 'RESPONDENT') => {
+      if (!allowedRole) return true;
+      return userRole === allowedRole;
+    };
+
+    expect(isAccessAllowed('OWNER', 'OWNER')).toBe(true);
+    expect(isAccessAllowed('RESPONDENT', 'OWNER')).toBe(false);
+    expect(isAccessAllowed('OWNER', 'RESPONDENT')).toBe(false);
+    expect(isAccessAllowed('RESPONDENT', 'RESPONDENT')).toBe(true);
   });
 
   it('Security: AC-38 pageshow bfcache invalidation trigger handler is supported', () => {
