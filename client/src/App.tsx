@@ -15,54 +15,58 @@ import { apiRequest, ApiErrorShape } from './api';
 // Sweet Candy SVG Icons & Decorative Elements
 // ---------------------------------------------------------------------------
 
-export const LollipopIcon: React.FC<{ size?: number }> = ({ size = 28 }) => (
+export const LollipopIcon: React.FC<{ size?: number }> = ({ size = 32 }) => (
   <svg
     width={size}
     height={size}
-    viewBox="0 0 36 36"
+    viewBox="0 0 38 38"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    {/* Lollipop Stick */}
-    <rect
-      x="16.5"
-      y="18"
-      width="3"
-      height="16"
-      rx="1.5"
-      fill="url(#stick-gradient)"
-    />
-    {/* Lollipop Candy Head */}
-    <circle cx="18" cy="14" r="11" fill="url(#candy-base)" />
-    {/* Inner Spiral Swirl */}
-    <path
-      d="M18 6C13.5817 6 10 9.58172 10 14C10 18.4183 13.5817 22 18 22C21.3137 22 24 19.3137 24 16C24 13.7909 22.2091 12 20 12C18.8954 12 18 12.8954 18 14C18 14.5523 18.4477 15 19 15"
-      stroke="#ffffff"
-      strokeWidth="2.2"
+    {/* Angled Stick pointing down-left */}
+    <line
+      x1="18"
+      y1="23"
+      x2="10"
+      y2="34"
+      stroke="#B8C8D8"
+      strokeWidth="2.5"
       strokeLinecap="round"
-      opacity="0.9"
     />
-    {/* Glossy Glass Highlight */}
-    <ellipse
-      cx="14.5"
-      cy="10.5"
-      rx="3.5"
-      ry="2"
-      transform="rotate(-30 14.5 10.5)"
-      fill="#ffffff"
-      opacity="0.75"
+
+    {/* Blue Ribbon Wings */}
+    <path
+      d="M17.5 24.5C13.5 22.5 9.5 25.5 12 29.5C14.5 29.5 16.5 27 17.5 25.5Z"
+      fill="#BAE3F8"
+      stroke="#96CEEB"
+      strokeWidth="0.8"
     />
-    <defs>
-      <linearGradient id="stick-gradient" x1="18" y1="18" x2="18" y2="34" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#fde047" />
-        <stop offset="1" stopColor="#f59e0b" />
-      </linearGradient>
-      <linearGradient id="candy-base" x1="7" y1="3" x2="29" y2="25" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#ff758f" />
-        <stop offset="0.5" stopColor="#ff4d6d" />
-        <stop offset="1" stopColor="#38bdf8" />
-      </linearGradient>
-    </defs>
+    <path
+      d="M18.5 24.5C22.5 22.5 24.5 26 22 29C19.8 29.5 18.5 27 18.5 25.5Z"
+      fill="#BAE3F8"
+      stroke="#96CEEB"
+      strokeWidth="0.8"
+    />
+    {/* Ribbon Center Knot */}
+    <ellipse cx="18" cy="24.8" rx="2" ry="1.6" fill="#88CBEA" />
+
+    {/* Lollipop Head */}
+    <circle
+      cx="22"
+      cy="14"
+      r="10.5"
+      fill="#FFF7FA"
+      stroke="#DE88AA"
+      strokeWidth="2.2"
+    />
+
+    {/* Clockwise Spiral Swirl */}
+    <path
+      d="M22 6C17.5817 6 14 9.58172 14 14C14 18.4183 17.5817 22 22 22C25.3137 22 28 19.3137 28 16C28 13.5 26 11.5 23.5 11.5C21.5 11.5 20 13 20 14.8C20 15.8 20.8 16.5 21.8 16.5"
+      stroke="#DE88AA"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
@@ -377,10 +381,10 @@ export const Navbar: React.FC = () => {
         to={user ? (isOwner ? '/owner/surveys' : '/surveys') : '/login'}
         className="brand"
       >
-        <div className="brand-icon">
-          <LollipopIcon size={30} />
-        </div>
         <span className="brand-title">Pollipop</span>
+        <div className="brand-icon">
+          <LollipopIcon size={34} />
+        </div>
       </Link>
 
       {user && (
@@ -479,8 +483,11 @@ const LoginPage: React.FC = () => {
       <div className="card" style={{ position: 'relative' }}>
         <CornerCandyDecor />
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <LollipopIcon size={48} />
-          <h2 style={{ margin: '0.6rem 0 0.3rem 0', fontSize: '1.5rem' }}>เข้าสู่ระบบ Pollipop</h2>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.35rem' }}>
+            <span className="brand-title" style={{ fontSize: '2.1rem' }}>Pollipop</span>
+            <LollipopIcon size={38} />
+          </div>
+          <h2 style={{ margin: '0.3rem 0 0.25rem 0', fontSize: '1.25rem' }}>เข้าสู่ระบบ</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', margin: 0 }}>
             เลือกเข้าสู่ระบบในบทบาทอาจารย์ผู้สร้าง หรือนักศึกษาผู้ตอบแบบสอบถาม
           </p>

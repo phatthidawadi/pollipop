@@ -70,29 +70,32 @@ body {
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.45rem;
   text-decoration: none;
-  color: var(--text-main);
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .brand:hover {
-  opacity: 0.9;
+  opacity: 0.95;
+  transform: translateY(-1px);
 }
 
 .brand-icon {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .brand-title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--text-main);
-  letter-spacing: -0.01em;
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #2F3B52;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-shadow: 2px 2px 0px #EFA082;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .brand-subtitle {
