@@ -15,16 +15,6 @@ export async function submitSurveyResponseHandler(req: Request, res: Response) {
   const { id } = req.params;
   const currentUser = req.user!;
 
-  // BR-05 / AC-23: Only RESPONDENT can submit responses; OWNER is rejected with 403 Forbidden
-  if (currentUser.role !== 'RESPONDENT') {
-    return res.status(403).json({
-      error: {
-        code: 'FORBIDDEN',
-        message: 'เฉพาะผู้ตอบแบบสอบถาม (RESPONDENT) เท่านั้นที่สามารถส่งคำตอบได้',
-      },
-    });
-  }
-
   try {
     // 1. Survey missing or DRAFT -> 404 Not Found (AC-22 / TEST-22)
     const survey = await prisma.survey.findUnique({
@@ -167,20 +157,10 @@ export async function submitSurveyResponseHandler(req: Request, res: Response) {
 }
 
 // F-03: GET /api/responses/:id (AC-27, AC-28, AC-29 / TEST-27, TEST-28, TEST-29)
-responseRouter.get('/:id', requireAuth, async (req: Request, res: Response) => {
+responseRouter.get('/:id', requireAuth, requireRole('RESPONDENT'), async (req: Request, res: Response) => {
   setNoStoreHeaders(res);
   const { id } = req.params;
   const currentUser = req.user!;
-
-  // BR-05 / BR-06 / AC-29: OWNER is forbidden from viewing individual responses
-  if (currentUser.role === 'OWNER') {
-    return res.status(403).json({
-      error: {
-        code: 'FORBIDDEN',
-        message: 'ผู้สร้างแบบสอบถามไม่สามารถเข้าถึงคำตอบรายบุคคลได้โดยตรง',
-      },
-    });
-  }
 
   try {
     const response = await prisma.response.findUnique({

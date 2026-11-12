@@ -115,10 +115,6 @@ describe('Feature F-03: Validated Response Submission & Own Response Inspection 
     await request(app).post(`/api/surveys/${closedSurveyId}/close`).set('Cookie', owner1Cookie);
   });
 
-  afterAll(async () => {
-    await prisma.$disconnect();
-  });
-
   // AC-23 / TEST-23: User with OWNER role attempting POST /api/surveys/:id/responses is rejected with 403 Forbidden
   it('TEST-23 / AC-23: OWNER role attempting POST /api/surveys/:id/responses is rejected with 403 Forbidden', async () => {
     const res = await request(app)
@@ -413,5 +409,9 @@ describe('Feature F-03: Validated Response Submission & Own Response Inspection 
       where: { surveyId: raceSurveyId },
     });
     expect(responsesInDb).toHaveLength(1);
+  });
+
+  afterAll(async () => {
+    await prisma.$disconnect();
   });
 });
