@@ -1,7 +1,6 @@
 :root {
   /* Candy Pastel University Theme */
   --bg-app: #FAFBFD;
-  --bg-dot: #D6E0EA;
 
   --text-main: #414C63;
   --text-body: #4F5D75;
@@ -47,8 +46,6 @@ body {
   margin: 0;
   font-family: 'DM Sans', 'Noto Sans Thai', 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg-app);
-  background-image: radial-gradient(var(--bg-dot) 1.2px, transparent 1.2px);
-  background-size: 16px 16px;
   color: var(--text-main);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
