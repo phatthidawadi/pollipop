@@ -106,8 +106,13 @@ export function calculateSurveySummary(
     const questionAnswers = allAnswers.filter((a) => a.questionId === q.id);
 
     if (q.type === 'SINGLE_CHOICE') {
+      const validOptionIds = new Set((q.options ?? []).map((o) => o.id));
       const validAnswers = questionAnswers.filter(
-        (a) => a.optionId !== undefined && a.optionId !== null && a.optionId !== ''
+        (a) =>
+          a.optionId !== undefined &&
+          a.optionId !== null &&
+          a.optionId !== '' &&
+          validOptionIds.has(a.optionId)
       );
       const totalAnswered = validAnswers.length;
 
@@ -187,3 +192,4 @@ export function calculateSurveySummary(
     questions: questionSummaries,
   };
 }
+

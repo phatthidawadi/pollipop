@@ -370,6 +370,7 @@ surveyRouter.get('/:id/summary', requireAuth, requireRole('OWNER'), async (req: 
           include: {
             answers: true,
           },
+          orderBy: { submittedAt: 'asc' },
         },
       },
     });

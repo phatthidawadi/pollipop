@@ -298,6 +298,122 @@ describe('Feature F-04: Survey Summary & Aggregate Analytics (TEST-30..TEST-34)'
     });
   });
 
+  // AC-34 / TEST-34 (API Integration): Survey with skipped optional question computes metrics strictly on totalAnswered via API
+  it('TEST-34 / AC-34 (API Integration): GET /api/surveys/:id/summary computes metrics based strictly on actual answer count for skipped optional questions', async () => {
+    // 1. Create survey with required SINGLE_CHOICE and optional RATING
+    const surveyRes = await request(app)
+      .post('/api/surveys')
+      .set('Cookie', owner1Cookie)
+      .send({
+        title: 'AC-34 Integration Optional Question Survey',
+        mode: 'IDENTIFIED',
+        questions: [
+          {
+            text: 'Preferred programming lab framework',
+            type: 'SINGLE_CHOICE',
+            required: true,
+            options: ['React', 'Vue'],
+          },
+          {
+            text: 'Optional lab difficulty rating',
+            type: 'RATING',
+            required: false,
+          },
+        ],
+      });
+
+    const optSurveyId = surveyRes.body.id;
+    const reqQId = surveyRes.body.questions[0].id;
+    const reqOptId = surveyRes.body.questions[0].options[0].id;
+    const optQId = surveyRes.body.questions[1].id;
+
+    await request(app).post(`/api/surveys/${optSurveyId}/publish`).set('Cookie', owner1Cookie);
+
+    // 2. Student 1 answers both questions (Rating: 4)
+    await request(app)
+      .post(`/api/surveys/${optSurveyId}/responses`)
+      .set('Cookie', student1Cookie)
+      .send({
+        answers: [
+          { questionId: reqQId, optionId: reqOptId },
+          { questionId: optQId, ratingValue: 4 },
+        ],
+      });
+
+    // 3. Student 2 answers only required question, skipping optional rating
+    await request(app)
+      .post(`/api/surveys/${optSurveyId}/responses`)
+      .set('Cookie', student2Cookie)
+      .send({
+        answers: [{ questionId: reqQId, optionId: reqOptId }],
+      });
+
+    // 4. Owner 1 calls GET /api/surveys/:id/summary
+    const summaryRes = await request(app)
+      .get(`/api/surveys/${optSurveyId}/summary`)
+      .set('Cookie', owner1Cookie);
+
+    expect(summaryRes.status).toBe(200);
+    expect(summaryRes.body.totalResponses).toBe(2);
+
+    const singleChoiceResult = summaryRes.body.questions.find((q: any) => q.questionId === reqQId);
+    expect(singleChoiceResult.totalAnswered).toBe(2);
+
+    const ratingResult = summaryRes.body.questions.find((q: any) => q.questionId === optQId);
+    expect(ratingResult.totalAnswered).toBe(1);
+    expect(ratingResult.averageRating).toBe(4);
+    expect(ratingResult.distribution).toEqual({
+      '1': 0,
+      '2': 0,
+      '3': 0,
+      '4': 1,
+      '5': 0,
+    });
+  });
+
+  // Defensive unit test: calculateSurveySummary filters out invalid optionIds not belonging to question
+  it('calculateSurveySummary filters out invalid optionIds not belonging to question options', () => {
+    const surveyWithInvalidOption = {
+      id: 'survey-defensive',
+      title: 'Defensive Test Survey',
+      status: 'PUBLISHED',
+      mode: 'IDENTIFIED',
+      questions: [
+        {
+          id: 'q-choice',
+          text: 'Choice Question',
+          type: 'SINGLE_CHOICE',
+          required: true,
+          options: [
+            { id: 'opt-valid-1', text: 'Valid Option 1' },
+            { id: 'opt-valid-2', text: 'Valid Option 2' },
+          ],
+        },
+      ],
+    };
+
+    const responsesWithInvalidData = [
+      {
+        id: 'resp-1',
+        answers: [{ questionId: 'q-choice', optionId: 'opt-valid-1' }],
+      },
+      {
+        id: 'resp-2',
+        answers: [{ questionId: 'q-choice', optionId: 'foreign-corrupted-option-id' }],
+      },
+    ];
+
+    const result = calculateSurveySummary(surveyWithInvalidOption, responsesWithInvalidData);
+    const qResult = result.questions[0] as any;
+
+    // Only 1 answer has a valid optionId
+    expect(qResult.totalAnswered).toBe(1);
+    expect(qResult.options[0].count).toBe(1);
+    expect(qResult.options[0].percentage).toBe(100);
+    expect(qResult.options[1].count).toBe(0);
+    expect(qResult.options[1].percentage).toBe(0);
+  });
+
   // Edge Case: Non-existent survey returns 404 NOT_FOUND
   it('Non-existent survey returns 404 NOT_FOUND', async () => {
     const res = await request(app)
@@ -320,3 +436,4 @@ describe('Feature F-04: Survey Summary & Aggregate Analytics (TEST-30..TEST-34)'
     await prisma.$disconnect();
   });
 });
+
