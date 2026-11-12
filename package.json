@@ -1,0 +1,23 @@
+{
+  "name": "pollipop-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "University Review, Feedback, and Survey System (CPE 334 Deliverable 1)",
+  "scripts": {
+    "dev": "npm --prefix server run dev",
+    "dev:all": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "build": "npm --prefix client run build && npm --prefix server run build",
+    "test": "npm run test:server && npm run test:client",
+    "test:server": "npm --prefix server test",
+    "test:client": "npm --prefix client test",
+    "test:e2e": "playwright test -c e2e/playwright.config.ts",
+    "prisma:migrate": "npm --prefix server run prisma:migrate",
+    "prisma:seed": "npm --prefix server run prisma:seed",
+    "prisma:studio": "npm --prefix server run prisma:studio"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "concurrently": "^9.1.0"
+  }
+}
+
