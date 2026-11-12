@@ -3,6 +3,7 @@ import { prisma } from '../prisma';
 import { requireAuth, requireRole, setNoStoreHeaders } from '../auth';
 import { createSurveySchema, formatZodError } from '../validation';
 import { submitSurveyResponseHandler } from './response.routes';
+import { calculateSurveySummary } from '../summary';
 
 export const surveyRouter = Router();
 
@@ -348,5 +349,62 @@ surveyRouter.post('/:id/close', requireAuth, requireRole('OWNER'), async (req: R
 
 // F-03: POST /api/surveys/:id/responses (AC-20..AC-26, AC-36 / TEST-20..TEST-26, TEST-36, TEST-37)
 surveyRouter.post('/:id/responses', requireAuth, requireRole('RESPONDENT'), submitSurveyResponseHandler);
+
+// F-04: GET /api/surveys/:id/summary (AC-30..AC-34 / TEST-30..TEST-34)
+surveyRouter.get('/:id/summary', requireAuth, requireRole('OWNER'), async (req: Request, res: Response) => {
+  setNoStoreHeaders(res);
+  const { id } = req.params;
+  const currentUser = req.user!;
+
+  try {
+    const survey = await prisma.survey.findUnique({
+      where: { id },
+      include: {
+        questions: {
+          include: {
+            options: { orderBy: { orderIndex: 'asc' } },
+          },
+          orderBy: { orderIndex: 'asc' },
+        },
+        responses: {
+          include: {
+            answers: true,
+          },
+        },
+      },
+    });
+
+    if (!survey) {
+      return res.status(404).json({
+        error: {
+          code: 'NOT_FOUND',
+          message: 'ไม่พบแบบสอบถามที่ระบุ',
+        },
+      });
+    }
+
+    // BR-04 / AC-32: Ownership isolation - only authoring OWNER can view results
+    if (survey.ownerId !== currentUser.id) {
+      return res.status(403).json({
+        error: {
+          code: 'FORBIDDEN',
+          message: 'คุณไม่มีสิทธิ์เข้าถึงผลสรุปของแบบสอบถามนี้',
+        },
+      });
+    }
+
+    const summary = calculateSurveySummary(survey);
+    return res.status(200).json(summary);
+  } catch (error) {
+    console.error('Failed to get survey summary:', error);
+    return res.status(500).json({
+      error: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'เกิดข้อผิดพลาดในการดึงผลสรุปของแบบสอบถาม',
+      },
+    });
+  }
+});
+
 
 
