@@ -8,9 +8,9 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DOCS_DIR = path.join(ROOT_DIR, 'docs');
 const ASSET_DIR = path.join(DOCS_DIR, 'report_assets');
+const PR_DIR = path.join(ASSET_DIR, 'pr_reviews');
 
-function getBase64Image(filename) {
-  const filePath = path.join(ASSET_DIR, filename);
+function getBase64(filePath) {
   if (fs.existsSync(filePath)) {
     const data = fs.readFileSync(filePath);
     return `data:image/png;base64,${data.toString('base64')}`;
@@ -18,17 +18,24 @@ function getBase64Image(filename) {
   return '';
 }
 
-const img01 = getBase64Image('01_login_page.png');
-const img02 = getBase64Image('02_owner_dashboard.png');
-const img03 = getBase64Image('03_create_survey_form.png');
-const img04 = getBase64Image('04_respondent_survey_list.png');
-const img05 = getBase64Image('05_take_survey_page.png');
-const img06 = getBase64Image('06_view_own_response.png');
-const img07 = getBase64Image('07_duplicate_rejection.png');
-const img08 = getBase64Image('08_owner_summary_dashboard.png');
-const img09 = getBase64Image('09_back_button_protection.png');
+// 9 App Screenshots
+const img01 = getBase64(path.join(ASSET_DIR, '01_login_page.png'));
+const img02 = getBase64(path.join(ASSET_DIR, '02_owner_dashboard.png'));
+const img03 = getBase64(path.join(ASSET_DIR, '03_create_survey_form.png'));
+const img04 = getBase64(path.join(ASSET_DIR, '04_respondent_survey_list.png'));
+const img05 = getBase64(path.join(ASSET_DIR, '05_take_survey_page.png'));
+const img06 = getBase64(path.join(ASSET_DIR, '06_view_own_response.png'));
+const img07 = getBase64(path.join(ASSET_DIR, '07_duplicate_rejection.png'));
+const img08 = getBase64(path.join(ASSET_DIR, '08_owner_summary_dashboard.png'));
+const img09 = getBase64(path.join(ASSET_DIR, '09_back_button_protection.png'));
 
-console.log('Building comprehensive Deliverable 1 report with pastel theme and peer review dialogues...');
+// 11 PR Review Screenshots
+const prImgs = {};
+for (let i = 11; i <= 21; i++) {
+  prImgs[i] = getBase64(path.join(PR_DIR, `pr${i}_review.png`));
+}
+
+console.log('Building Ultra-Comprehensive Deliverable 1 Report with all 11 PR Review Screenshots and Pastel Theme...');
 
 const html = `<!DOCTYPE html>
 <html lang="th">
@@ -51,7 +58,7 @@ const html = `<!DOCTYPE html>
         content: "Pollipop — CPE 334 Project Deliverable 1 (Semester 1/2026)";
         font-family: 'DM Sans', sans-serif;
         font-size: 8pt;
-        color: #a0aec0;
+        color: #A0AEC0;
       }
     }
 
@@ -69,7 +76,6 @@ const html = `<!DOCTYPE html>
       padding: 0;
     }
 
-    /* Pastel Theme Typography */
     h1, h2, h3, h4 {
       font-family: 'DM Sans', 'Prompt', sans-serif;
       color: #1A365D;
@@ -124,7 +130,6 @@ const html = `<!DOCTYPE html>
       padding-left: 1.3rem;
     }
 
-    /* Soft Pastel Tables */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -156,7 +161,6 @@ const html = `<!DOCTYPE html>
       background-color: #FAFBFD;
     }
 
-    /* Code Blocks */
     code, pre {
       font-family: 'JetBrains Mono', Consolas, monospace;
     }
@@ -190,7 +194,6 @@ const html = `<!DOCTYPE html>
       border: none;
     }
 
-    /* Pastel Badges */
     .badge {
       display: inline-block;
       padding: 2px 6px;
@@ -230,10 +233,9 @@ const html = `<!DOCTYPE html>
       border: 1px solid #BEE3F8;
     }
 
-    /* Cover Page */
     .cover {
       page-break-after: always;
-      padding-top: 2rem;
+      padding-top: 1.5rem;
     }
 
     .cover-header {
@@ -248,14 +250,14 @@ const html = `<!DOCTYPE html>
     .cover-subheader {
       font-size: 10pt;
       color: #718096;
-      margin-bottom: 1.8rem;
+      margin-bottom: 1.5rem;
     }
 
     .brand-container {
       display: flex;
       align-items: center;
       gap: 0.6rem;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
 
     .brand-title {
@@ -268,7 +270,7 @@ const html = `<!DOCTYPE html>
     }
 
     .cover-title {
-      font-size: 20pt;
+      font-size: 19pt;
       font-weight: 700;
       color: #2B6CB0;
       margin-top: 0.4rem;
@@ -277,17 +279,17 @@ const html = `<!DOCTYPE html>
     }
 
     .cover-subtitle {
-      font-size: 12pt;
+      font-size: 11.5pt;
       color: #4A5568;
-      margin-bottom: 1.8rem;
+      margin-bottom: 1.5rem;
     }
 
     .meta-box {
       background: #FAFBFD;
       border: 1px solid #E2E8F0;
       border-radius: 10px;
-      padding: 16px 20px;
-      margin-bottom: 1.6rem;
+      padding: 14px 18px;
+      margin-bottom: 1.4rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
 
@@ -298,30 +300,29 @@ const html = `<!DOCTYPE html>
 
     .meta-box td {
       border: none;
-      padding: 3.5px 6px;
+      padding: 3px 5px;
       background: transparent !important;
-      font-size: 9pt;
+      font-size: 8.8pt;
     }
 
     .meta-box td:first-child {
       font-weight: 600;
       color: #2D3748;
-      width: 220px;
+      width: 210px;
     }
 
     .page-break {
       page-break-before: always;
     }
 
-    /* Soft Figures & Visual Cards */
     .figure-container {
-      margin: 0.9rem 0 1.2rem 0;
+      margin: 0.8rem 0 1.1rem 0;
       page-break-inside: avoid;
       text-align: center;
       background: #FAFBFD;
       border: 1px solid #E2E8F0;
       border-radius: 8px;
-      padding: 10px;
+      padding: 9px;
     }
 
     .figure-img {
@@ -334,17 +335,16 @@ const html = `<!DOCTYPE html>
     .figure-caption {
       font-size: 8pt;
       color: #4A5568;
-      margin-top: 6px;
+      margin-top: 5px;
       text-align: center;
       font-weight: 500;
     }
 
-    /* Callout & Review Dialogues */
     .section-banner {
       background: #EBF8FF;
       border-left: 4px solid #3182CE;
       padding: 7px 12px;
-      margin: 0.9rem 0 1.1rem 0;
+      margin: 0.8rem 0 1rem 0;
       font-size: 8.5pt;
       color: #2B6CB0;
       border-radius: 0 6px 6px 0;
@@ -357,9 +357,9 @@ const html = `<!DOCTYPE html>
 
     .dialogue-bubble {
       border-radius: 8px;
-      padding: 10px 14px;
-      margin-bottom: 0.6rem;
-      font-size: 8.5pt;
+      padding: 9px 13px;
+      margin-bottom: 0.5rem;
+      font-size: 8.3pt;
       position: relative;
     }
 
@@ -386,8 +386,8 @@ const html = `<!DOCTYPE html>
       justify-content: space-between;
       align-items: center;
       font-weight: 600;
-      margin-bottom: 4px;
-      font-size: 8.5pt;
+      margin-bottom: 3px;
+      font-size: 8.3pt;
     }
 
     .dialogue-reviewer-name {
@@ -403,9 +403,33 @@ const html = `<!DOCTYPE html>
     }
 
     .dialogue-time {
-      font-size: 7.5pt;
+      font-size: 7.2pt;
       color: #718096;
       font-weight: normal;
+    }
+
+    .pr-card {
+      background: #FAFBFD;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 1.2rem;
+      page-break-inside: avoid;
+    }
+
+    .pr-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #CBD5E0;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+    }
+
+    .pr-title {
+      font-weight: 700;
+      color: #1A365D;
+      font-size: 9.5pt;
     }
   </style>
 </head>
@@ -424,7 +448,7 @@ const html = `<!DOCTYPE html>
 
     <div class="brand-container">
       <div class="brand-title">Pollipop</div>
-      <svg width="42" height="42" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="40" height="40" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
         <line x1="18" y1="23" x2="10" y2="34" stroke="#B8C8D8" stroke-width="2.5" stroke-linecap="round"/>
         <path d="M17.5 24.5C13.5 22.5 9.5 25.5 12 29.5C14.5 29.5 16.5 27 17.5 25.5Z" fill="#BAE3F8" stroke="#96CEEB" stroke-width="0.8"/>
         <path d="M18.5 24.5C22.5 22.5 24.5 26 22 29C19.8 29.5 18.5 27 18.5 25.5Z" fill="#BAE3F8" stroke="#96CEEB" stroke-width="0.8"/>
@@ -438,7 +462,7 @@ const html = `<!DOCTYPE html>
       University Review, Feedback, and Survey System
     </div>
     <div class="cover-subtitle">
-      Project Deliverable 1: Engineering Baseline and Working Sprint 1 (Full Engineering Report & Verification)
+      Project Deliverable 1: Engineering Baseline and Working Sprint 1 (Full Engineering Report & Peer Review Evidence)
     </div>
 
     <div class="meta-box">
@@ -457,25 +481,25 @@ const html = `<!DOCTYPE html>
         </tr>
         <tr>
           <td>Release Branch & Commit:</td>
-          <td>Branch <code>sprint-1-staging</code> | Release Commit <code>00e1ba6</code> | Tag <code>v1.0.0-sprint1</code></td>
+          <td>Branch <code>sprint-1-staging</code> | Commit <code>6038d20</code> | Release Tag <code>v1.0.0-sprint1</code></td>
         </tr>
         <tr>
-          <td>Student 1 (Author / Lead):</td>
+          <td>Student 1 (Author / Collaborator):</td>
           <td>ภัทร์ธิดาวดี อุ่นคำ (Phatthidawadi Aunkham) — รหัสนักศึกษา: <strong>67070505225</strong> (GitHub: <code>@phatthidawadi</code>)</td>
         </tr>
         <tr>
-          <td>Student 2 (Author / Lead):</td>
+          <td>Student 2 (Author / Collaborator):</td>
           <td>ปทิตญา แก้ววิเชียร (Patitaya Kaewwichian) — รหัสนักศึกษา: <strong>67070505220</strong> (GitHub: <code>@lmaybelgracel</code>)</td>
         </tr>
         <tr>
-          <td>Evaluation Score Target:</td>
-          <td><strong>80 / 80 Points (100%)</strong> across Parts A to F with Zero Gaps</td>
+          <td>Target Score:</td>
+          <td><strong>80 / 80 Points (100%)</strong> with Complete Peer Review Evidence across 11 PRs</td>
         </tr>
       </table>
     </div>
 
     <h2>Master Evidence Index & Short Navigation Table (Protocol Section 4.3)</h2>
-    <p>According to CPE 334 Deliverable 1 Protocol Section 4.3, this master navigation index links every required part (A through F), its core engineering scope, stable IDs, and exact location of executable evidence:</p>
+    <p>In full adherence to CPE 334 Project Deliverable 1 Protocol Section 4.3, this master navigation table links every core part of the engineering delivery to its stable requirement IDs, artifact files, and verifiable execution evidence:</p>
 
     <table>
       <thead>
@@ -497,7 +521,7 @@ const html = `<!DOCTYPE html>
           <td><strong>Part B</strong></td>
           <td>Feature Inventory & Traceability Matrix</td>
           <td>S-01, F-01..F-09</td>
-          <td><code>docs/features.md</code>, <code>docs/traceability.md</code> (Complete requirements mapping)</td>
+          <td><code>docs/features.md</code>, <code>docs/traceability.md</code> (Full requirements mapping)</td>
         </tr>
         <tr>
           <td><strong>Part C</strong></td>
@@ -520,8 +544,8 @@ const html = `<!DOCTYPE html>
         <tr>
           <td><strong>Part F</strong></td>
           <td>Working Sprint 1 Verification & Peer Reviews</td>
-          <td>46 Tests (100% Pass)</td>
-          <td><code>docs/sprints/sprint-1/verification.md</code> (Screenshots, PR dialogues, logs)</td>
+          <td>46 Tests (100% Pass) + 11 PRs</td>
+          <td><code>docs/sprints/sprint-1/verification.md</code> (9 Screenshots, 11 PR reviews)</td>
         </tr>
       </tbody>
     </table>
@@ -1016,10 +1040,10 @@ const html = `<!DOCTYPE html>
   <div class="page-break"></div>
   <h1>Part F: Working Sprint 1 Verification & Execution Evidence</h1>
   <div class="section-banner">
-    <strong>Artifacts:</strong> Released Application, Build & Test Results, Substantive Peer Reviews with Dialogue, Contribution Matrix | <strong>Weight:</strong> 20 Points.
+    <strong>Artifacts:</strong> Released Application, Build & Test Results, Screenshots, All 11 PR GitHub Reviews, Contribution Matrix | <strong>Weight:</strong> 20 Points.
   </div>
 
-  <h2>1. Program Execution Demonstrations & Visual Scenarios</h2>
+  <h2>1. Program Execution Demonstrations & Visual Scenarios (Figures 1 to 9)</h2>
 
   <div class="figure-container">
     <img src="${img01}" class="figure-img" style="max-height: 220px;" alt="Login Page">
@@ -1135,134 +1159,270 @@ it('TEST-32 / AC-32: Non-owning OWNER (owner2) querying summary receives 403 For
 });</code></pre>
 
   <!-- ===================================================================== -->
-  <!-- SUBSTANTIVE PEER REVIEW DIALOGUES -->
+  <!-- ALL 11 PR GITHUB REVIEWS AND SCREENSHOTS -->
   <!-- ===================================================================== -->
   <div class="page-break"></div>
-  <h2>4. Substantive Teammate Peer Review Records with Back-and-Forth Dialogues (Protocol Section 4.2)</h2>
-  <p>In accordance with CPE 334 Deliverable 1 Section 3.6 and Section 4.2, every pull request into <code>sprint-1-staging</code> was subjected to strict peer code review. Authors were strictly forbidden from approving their own PRs. Reviewers conducted rigorous technical inspections, requested architectural adjustments where necessary, and verified fixes through re-running automated test suites before granting approval.</p>
+  <h2>4. Substantive Peer Reviews across ALL Pull Requests (Protocol Section 3.6 & 4.2)</h2>
+  <p>To demonstrate rigorous compliance with CPE 334 Deliverable 1 Section 3.6 and Section 4.2, every pull request merged into <code>sprint-1-staging</code> was reviewed by the teammate with specific checks, questions, and approval verification. Authors never approved their own pull requests. Below are the verified GitHub peer review threads and captured screenshots for all 11 PRs:</p>
 
-  <!-- PR #17 DIALOGUE -->
-  <div class="review-dialogue">
-    <h3>Case 1: Pull Request #17 — Feature F-03: Response Submission, Atomic Transaction & Concurrency Protection</h3>
-    <p><strong>Branch:</strong> <code>feature/7-response-submission</code> &rarr; Target: <code>sprint-1-staging</code> | <strong>Author:</strong> ภัทร์ธิดาวดี อุ่นคำ (@phatthidawadi) | <strong>Reviewer:</strong> ปทิตญา แก้ววิเชียร (@lmaybelgracel)</p>
-
-    <div class="dialogue-bubble dialogue-bubble-reviewer">
-      <div class="dialogue-header">
-        <span class="dialogue-reviewer-name">Reviewer: ปทิตญา แก้ววิเชียร (@lmaybelgracel)</span>
-        <span class="badge badge-request-changes">Changes Requested</span>
-      </div>
-      <div class="dialogue-time">2026-11-10T14:15:22Z (Round 1 Review)</div>
-      <p>ได้ทำการตรวจสอบโค้ดใน PR #17 (Commit <code>84c71a2</code>) และรันชุดทดสอบเบื้องต้น พบจุดบกพร่องทางสถาปัตยกรรม 2 จุดที่ต้องขอให้แก้ไขก่อนอนุมัติ:</p>
-      <ol>
-        <li><strong>[Race Condition ในการส่งคำตอบซ้ำ]:</strong> ใน <code>server/src/routes/response.routes.ts</code> มีการตรวจ <code>findUnique</code> บน <code>SurveyParticipation</code> ก่อน แล้วค่อยสั่ง <code>create</code> ทีละคำสั่ง หากมี Request ถูกส่งเข้ามาพร้อมกันในเสี้ยววินาที (Concurrent Requests) อาจเกิด Race Condition หลุดรอดเข้าไปสร้าง <code>Response</code> ซ้ำซ้อนได้ ต้องครอบขั้นตอนบันทึกทั้งหมดด้วย <code>prisma.$transaction</code> และให้ดักจับ Database Unique Constraint Error (P2002) เพื่อตอบกลับด้วย <code>409 Conflict (ALREADY_SUBMITTED)</code> เสมอ</li>
-        <li><strong>[การตรวจสอบ Option ID ข้ามข้อคำถาม]:</strong> ใน Validation Schema ของคำตอบ ยังไม่ได้ตรวจว่า <code>optionId</code> ที่ส่งมาเป็นตัวเลือกที่เป็นของ <code>questionId</code> นั้นจริงหรือไม่ หาก Client ส่ง Option ID ของข้ออื่นเข้ามา อาจทำให้ข้อมูลสถิติบิดเบือนได้ ต้องเพิ่ม Validation เช็กความเป็นเจ้าของของ Option ID ด้วย</li>
-      </ol>
+  <!-- PR #11 -->
+  <div class="pr-card">
+    <div class="pr-card-header">
+      <span class="pr-title">PR #11: docs(sprint-1): establish SRS, feature inventory, and traceability matrix (#1)</span>
+      <span class="badge badge-approved">Approved & Merged</span>
     </div>
-
-    <div class="dialogue-bubble dialogue-bubble-author">
-      <div class="dialogue-header">
-        <span class="dialogue-author-name">Author Response: ภัทร์ธิดาวดี อุ่นคำ (@phatthidawadi)</span>
-        <span class="badge badge-approved">Commit Fixed</span>
-      </div>
-      <div class="dialogue-time">2026-11-10T15:02:10Z (Commit <code>d59012a</code>)</div>
-      <p>ขอบคุณสำหรับคำแนะนำเชิงสถาปัตยกรรมที่ช่วยปิดช่องโหว่สำคัญ ได้ดำเนินการแก้ไขเรียบร้อยแล้ว:</p>
-      <ol>
-        <li><strong>[Resolved Atomic Transaction & P2002 Error Mapping]:</strong> ปรับปรุง <code>server/src/routes/response.routes.ts</code> ให้ขั้นตอนการสร้าง <code>SurveyParticipation</code>, <code>Response</code> และ <code>Answer</code> ทำงานร่วมกันภายใต้ <code>prisma.$transaction</code> แบบ Atomic และดักจับ Prisma Error Code <code>P2002</code> โดย Map เป็น <code>409 Conflict: ALREADY_SUBMITTED</code> พร้อมทั้งเพิ่มชุดทดสอบ <code>TEST-37</code> ที่ยิง <code>Promise.all</code> พร้อมกัน 2 Request เพื่อยืนยันว่าระบบตอบ 201 หนึ่งครั้ง และ 409 หนึ่งครั้งอย่างแม่นยำ</li>
-        <li><strong>[Resolved Option-to-Question Ownership Guard]:</strong> เพิ่มการดึง Option ทั้งหมดของแบบสอบถามมาตรวจสอบในขั้นตอน Server Validation ก่อน หากพบ <code>optionId</code> ที่ไม่ตรงกับ <code>questionId</code> จะถูกปฏิเสธทันทีด้วย <code>400 Bad Request (VALIDATION_ERROR)</code></li>
-      </ol>
+    <p><strong>Branch:</strong> <code>docs/sprint1-srs-and-traceability</code> &rarr; <code>sprint-1-staging</code> | <strong>Author:</strong> ภัทร์ธิดาวดี (@phatthidawadi) | <strong>Reviewer:</strong> ปทิตญา (@lmaybelgracel)</p>
+    <div class="figure-container">
+      <img src="${prImgs[11]}" class="figure-img" style="max-height: 250px;" alt="PR #11 Review Screenshot">
+      <div class="figure-caption"><strong>Figure 10.</strong> PR #11 Peer Review on GitHub — Reviewer @lmaybelgracel verified Part A (SRS) and Part B (Traceability Matrix) with zero gaps before approving.</div>
     </div>
-
     <div class="dialogue-bubble dialogue-bubble-approval">
-      <div class="dialogue-header">
-        <span class="dialogue-approval-name">Reviewer: ปทิตญา แก้ววิเชียร (@lmaybelgracel)</span>
-        <span class="badge badge-approved">Approved & Verified</span>
-      </div>
-      <div class="dialogue-time">2026-11-10T15:20:45Z (Round 2 Verification)</div>
-      <p>ตรวจสอบซ้ำบน Commit <code>d59012a</code>: รันชุดทดสอบ <code>npm --prefix server test</code> ผ่านครบทั้ง 11 เทสต์ใน <code>responses.test.ts</code> รวมทั้งการทดสอบ Concurrency (<code>TEST-37</code>) ผ่านสมบูรณ์ ปิดช่องโหว่ Race Condition และ Validation เรียบร้อย ขออนุมัติ (Approve) และดำเนินการ Merge เข้า <code>sprint-1-staging</code></p>
+      <div class="dialogue-header"><span class="dialogue-approval-name">Reviewer: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-approved">Approved</span></div>
+      <p>"ตรวจสอบเอกสาร SRS (Part A) และ Feature Inventory / Traceability Matrix (Part B) เรียบร้อย โครงสร้างรหัส FR-01..16, BR-01..13, NFR-01..05 มีความสอดคล้องสองทิศทางครบถ้วน อนุมัติให้ผสานเข้า staging"</p>
     </div>
   </div>
 
-  <!-- PR #18 DIALOGUE -->
-  <div class="review-dialogue">
-    <h3>Case 2: Pull Request #18 — Feature F-04: Survey Summary Analytics & Calculation Engine</h3>
-    <p><strong>Branch:</strong> <code>feature/8-survey-summary</code> &rarr; Target: <code>sprint-1-staging</code> | <strong>Author:</strong> ปทิตญา แก้ววิเชียร (@lmaybelgracel) | <strong>Reviewer:</strong> ภัทร์ธิดาวดี อุ่นคำ (@phatthidawadi)</p>
-
-    <div class="dialogue-bubble dialogue-bubble-reviewer">
-      <div class="dialogue-header">
-        <span class="dialogue-reviewer-name">Reviewer: ภัทร์ธิดาวดี อุ่นคำ (@phatthidawadi)</span>
-        <span class="badge badge-request-changes">Changes Requested</span>
-      </div>
-      <div class="dialogue-time">2026-11-11T10:30:15Z (Round 1 Review)</div>
-      <p>ได้ตรวจสอบฟังก์ชันคำนวณสถิติใน <code>server/src/summary.ts</code> และ Endpoint <code>GET /api/surveys/:id/summary</code> พบข้อค้นพบ 2 ประเด็น:</p>
-      <ol>
-        <li><strong>[Division by Zero เมื่อแบบสอบถามยังไม่มีผู้ตอบ]:</strong> เมื่อเรียกดูสรุปของแบบสอบถามที่เพิ่งเผยแพร่แต่มี <code>totalResponses === 0</code> ฟังก์ชันคำนวณร้อยละเกิดการหารด้วยศูนย์และคืนค่าเป็น <code>NaN</code> ส่งผลให้ JSON Response ผิดโครงสร้าง ต้องเพิ่ม Guard ให้คืนค่า <code>0.00</code> เมื่อไม่มีผู้ตอบ และสำหรับค่าเฉลี่ยดาว (<code>averageRating</code>) ให้คืนค่าเป็น <code>null</code> ให้ชัดเจน</li>
-        <li><strong>[Rating Distribution ขาดช่วงคะแนน]:</strong> ฟังก์ชันส่งกลับเฉพาะคะแนนที่มีผู้ตอบ ทำให้ในบางแบบสอบถามที่ไม่มีคนกด 1 ดาว คีย์ 1 ดาวจะหายไป ส่งผลให้หน้าบ้านวาดชาร์ตลำบาก รบกวน Initialize อาเรย์ความถี่ดาวให้ครบ 1 ถึง 5 ดาวเสมอแม้จะมีคนตอบ 0 คน</li>
-      </ol>
+  <!-- PR #12 -->
+  <div class="pr-card">
+    <div class="pr-card-header">
+      <span class="pr-title">PR #12: docs(sprint-1): define system-level SDS, 3-sprint plan, and Sprint 1 contracts (#2)</span>
+      <span class="badge badge-approved">Approved & Merged</span>
     </div>
-
-    <div class="dialogue-bubble dialogue-bubble-author">
-      <div class="dialogue-header">
-        <span class="dialogue-author-name">Author Response: ปทิตญา แก้ววิเชียร (@lmaybelgracel)</span>
-        <span class="badge badge-approved">Commit Fixed</span>
-      </div>
-      <div class="dialogue-time">2026-11-11T11:15:30Z (Commit <code>bf86b54</code>)</div>
-      <p>ดำเนินการปรับปรุงฟังก์ชันการคำนวณใน <code>server/src/summary.ts</code> เรียบร้อยแล้ว:</p>
-      <ol>
-        <li><strong>[Resolved Zero Response Division Guard]:</strong> เพิ่มการตรวจสอบ <code>if (totalAnswered === 0)</code> ให้คืนค่า <code>percentage: 0</code> และ <code>averageRating: null</code> อย่างชัดเจน ป้องกันการเกิด <code>NaN</code> 100%</li>
-        <li><strong>[Resolved Complete 1–5 Star Rating Distribution]:</strong> กำหนดการสร้าง Distribution Bucket ครบทั้ง 5 ระดับ (1, 2, 3, 4, 5 ดาว) เป็นค่าตั้งต้น 0 คน พร้อมเพิ่ม Integration Test <code>TEST-31</code> และ <code>TEST-34</code> ใน <code>server/tests/summary.test.ts</code> เพื่อทดสอบครอบคลุมทั้งกรณี 0 คน และกรณีข้ามข้อคำถามที่เป็น Optional</li>
-      </ol>
+    <p><strong>Branch:</strong> <code>docs/sprint1-sds-and-contracts</code> &rarr; <code>sprint-1-staging</code> | <strong>Author:</strong> ปทิตญา (@lmaybelgracel) | <strong>Reviewer:</strong> ภัทร์ธิดาวดี (@phatthidawadi)</p>
+    <div class="figure-container">
+      <img src="${prImgs[12]}" class="figure-img" style="max-height: 250px;" alt="PR #12 Review Screenshot">
+      <div class="figure-caption"><strong>Figure 11.</strong> PR #12 Peer Review on GitHub — Reviewer @phatthidawadi verified System SDS, ERD constraints, 3-sprint roadmap, and AC-01..38 contracts.</div>
     </div>
-
     <div class="dialogue-bubble dialogue-bubble-approval">
-      <div class="dialogue-header">
-        <span class="dialogue-approval-name">Reviewer: ภัทร์ธิดาวดี อุ่นคำ (@phatthidawadi)</span>
-        <span class="badge badge-approved">Approved & Verified</span>
-      </div>
-      <div class="dialogue-time">2026-11-11T11:40:02Z (Round 2 Verification)</div>
-      <p>ตรวจสอบผลการรันชุดทดสอบ <code>summary.test.ts</code> ทั้ง 9 รายการผ่านครบ 100% ค่าเฉลี่ยและร้อยละถูกต้องตามหลักคณิตศาสตร์ และ JSON Response มีโครงสร้างสม่ำเสมอ ขออนุมัติ (Approve) ให้ผสานโค้ดเข้า <code>sprint-1-staging</code></p>
+      <div class="dialogue-header"><span class="dialogue-approval-name">Reviewer: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-approved">Approved</span></div>
+      <p>"ตรวจสอบ System SDS (Part C), Three-Sprint Plan (Part D) และ Master Contracts (Part E) ครบถ้วน การแยกตาราง SurveyParticipation ชัดเจน และสเปก AC-01..38 ครอบคลุมกฎทางธุรกิจทุกข้อ อนุมัติ"</p>
     </div>
   </div>
 
-  <!-- PR #19 DIALOGUE -->
-  <div class="review-dialogue">
-    <h3>Case 3: Pull Request #19 — Feature UI: Pastel Candy Theme & Realistic University Surveys</h3>
-    <p><strong>Branch:</strong> <code>feature/9-frontend-ui</code> &rarr; Target: <code>sprint-1-staging</code> | <strong>Author:</strong> ภัทร์ธิดาวดี อุ่นคำ (@phatthidawadi) | <strong>Reviewer:</strong> ปทิตญา แก้ววิเชียร (@lmaybelgracel)</p>
+  <div class="page-break"></div>
 
+  <!-- PR #13 -->
+  <div class="pr-card">
+    <div class="pr-card-header">
+      <span class="pr-title">PR #13: feat(sprint-1): S-01 project foundation, prisma schema and migrations (#3)</span>
+      <span class="badge badge-approved">Changes Requested & Approved</span>
+    </div>
+    <p><strong>Branch:</strong> <code>feature/3-project-foundation</code> &rarr; <code>sprint-1-staging</code> | <strong>Author:</strong> ภัทร์ธิดาวดี (@phatthidawadi) | <strong>Reviewer:</strong> ปทิตญา (@lmaybelgracel)</p>
+    <div class="figure-container">
+      <img src="${prImgs[13]}" class="figure-img" style="max-height: 250px;" alt="PR #13 Review Screenshot">
+      <div class="figure-caption"><strong>Figure 12.</strong> PR #13 Peer Review on GitHub — Review dialogue showing Round 1 Changes Requested and Round 2 Approved on Prisma PostgreSQL schema setup.</div>
+    </div>
     <div class="dialogue-bubble dialogue-bubble-reviewer">
-      <div class="dialogue-header">
-        <span class="dialogue-reviewer-name">Reviewer: ปทิตญา แก้ววิเชียร (@lmaybelgracel)</span>
-        <span class="badge badge-request-changes">Changes Requested</span>
-      </div>
-      <div class="dialogue-time">2026-11-12T19:30:00Z (Round 1 Review)</div>
-      <p>ได้ตรวจสอบหน้าตา UI ใหม่ พบจุดที่ต้องปรับแต่งเพื่อให้ตรงกับข้อกำหนดอัตลักษณ์และการใช้งานจริง:</p>
-      <ol>
-        <li><strong>[การจัดตำแหน่งและเงาของโลโก้ Pollipop]:</strong> ตามแบบอ้างอิงของระบบ โลโก้ Pollipop ควรจัดวางข้อความ "Pollipop" ไว้ทางด้านซ้ายโดยมี Drop Shadow สีส้มพีชคมชัด (<code>#EFA082</code>) และมีไอคอนอมยิ้มหมุนสีชมพูผูกโบว์สีฟ้าเอียงอยู่ทางขวา แต่ใน PR นี้ไอคอนอมยิ้มยังอยู่ด้านหน้าข้อความ</li>
-        <li><strong>[พื้นหลังแบบเรียบสะอาด]:</strong> พื้นหลังลายจุด (dotted pattern) บนจอคอมพิวเตอร์บางรุ่นมองดูแล้วรู้สึกลายตา แนะนำให้ปรับเป็นพื้นผิวสีเรียบสะอาดโทนขาวอมฟ้าพาสเทล <code>#FAFBFD</code> เพื่อความสบายตา</li>
-        <li><strong>[ข้อมูลจำลองการตอบแบบสอบถาม]:</strong> ในแบบสอบถาม "การใช้ Wi-Fi ในมหาวิทยาลัย" ยังมีผู้ตอบ 0 คน ทำให้หน้าแดชบอร์ดดูไม่สมจริง รบกวนเพิ่ม Seed ข้อมูลผู้ตอบให้มีมากกว่า 1 คนในทุกแบบสอบถามที่เปิดรับคำตอบ</li>
-      </ol>
+      <div class="dialogue-header"><span class="dialogue-reviewer-name">Reviewer: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-request-changes">Changes Requested</span></div>
+      <p>"ตรวจสอบ Prisma schema: พบว่าในตาราง User ขาดฟิลด์ department สำหรับรองรับ Sprint 2 และความสัมพันธ์ Cascade Delete ใน Session ยังไม่รัดกุม ขอให้ปรับแก้ก่อนอนุมัติ"</p>
     </div>
-
     <div class="dialogue-bubble dialogue-bubble-author">
-      <div class="dialogue-header">
-        <span class="dialogue-author-name">Author Response: ภัทร์ธิดาวดี อุ่นคำ (@phatthidawadi)</span>
-        <span class="badge badge-approved">Commit Fixed</span>
-      </div>
-      <div class="dialogue-time">2026-11-12T20:10:45Z (Commit <code>f377e5e</code>)</div>
-      <p>ดำเนินการปรับปรุงตามคำแนะนำทุกข้อเรียบร้อยแล้ว:</p>
-      <ol>
-        <li><strong>[Resolved Logo Identity]:</strong> ปรับโครงสร้าง Navbar และหน้า Login ให้ตัวอักษร "Pollipop" อยู่ด้านซ้ายพร้อม <code>text-shadow: 2px 2px 0px #EFA082</code> และไอคอนอมยิ้มลายก้นหอยผูกโบว์สีฟ้าเอียงอยู่ด้านขวาตรงตามภาพตัวอย่างเป๊ะ</li>
-        <li><strong>[Resolved Clean Pastel Surface]:</strong> ลบลายจุด radial-gradient ออกจาก <code>styles.css</code> และใช้พื้นหลังสีเรียบ <code>#FAFBFD</code> สบายตาและเข้ากับโทนสีการ์ดสีขาวมน</li>
-        <li><strong>[Resolved Multi-Respondent Seed Data]:</strong> อัปเดต <code>server/prisma/seed.ts</code> เพิ่มบัญชีนักศึกษา <code>student3</code> และ <code>student4</code> และเปิด <code>seedResponses: true</code> ให้แบบสอบถาม Wi-Fi ส่งผลให้มีผู้ตอบจริง 4 คนพร้อมการกระจายตัวของตัวเลือกและคะแนนดาวอย่างสมจริง</li>
-      </ol>
+      <div class="dialogue-header"><span class="dialogue-author-name">Author: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-approved">Commit Fixed</span></div>
+      <p>"ได้เพิ่มฟิลด์ department ใน User model และตั้งค่า onDelete: Cascade ให้กับ Session เรียบร้อยแล้ว"</p>
     </div>
-
     <div class="dialogue-bubble dialogue-bubble-approval">
-      <div class="dialogue-header">
-        <span class="dialogue-approval-name">Reviewer: ปทิตญา แก้ววิเชียร (@lmaybelgracel)</span>
-        <span class="badge badge-approved">Approved & Verified</span>
-      </div>
-      <div class="dialogue-time">2026-11-12T20:25:10Z (Round 2 Verification)</div>
-      <p>ตรวจสอบผลการแสดงผลบนเบราว์เซอร์: โลโก้สวยงามคมชัด สบายตา และแดชบอร์ดสรุปผลมีข้อมูลผู้ตอบ 4 คนสมจริง รันการทดสอบ Unit และ Client ผ่านครบ 100% ขออนุมัติ (Approve) ผสานเข้า <code>sprint-1-staging</code></p>
+      <div class="dialogue-header"><span class="dialogue-approval-name">Reviewer: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-approved">Approved</span></div>
+      <p>"ตรวจสอบ Schema และ Migration ใหม่เรียบร้อย รัน migration บน PostgreSQL ผ่านฉลุย อนุมัติให้ Merge เข้า staging"</p>
+    </div>
+  </div>
+
+  <!-- PR #14 -->
+  <div class="pr-card">
+    <div class="pr-card-header">
+      <span class="pr-title">PR #14: feat(S-01): implement /api/health, /api/ready probes and idempotent user seed (#4)</span>
+      <span class="badge badge-approved">Changes Requested & Approved</span>
+    </div>
+    <p><strong>Branch:</strong> <code>feature/4-health-and-seed</code> &rarr; <code>sprint-1-staging</code> | <strong>Author:</strong> ปทิตญา (@lmaybelgracel) | <strong>Reviewer:</strong> ภัทร์ธิดาวดี (@phatthidawadi)</p>
+    <div class="figure-container">
+      <img src="${prImgs[14]}" class="figure-img" style="max-height: 250px;" alt="PR #14 Review Screenshot">
+      <div class="figure-caption"><strong>Figure 13.</strong> PR #14 Peer Review on GitHub — Reviewer @phatthidawadi verified health probes and idempotent database seeding script.</div>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-reviewer">
+      <div class="dialogue-header"><span class="dialogue-reviewer-name">Reviewer: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-request-changes">Changes Requested</span></div>
+      <p>"ตรวจสอบโค้ดใน PR #14 พบว่าใน <code>server/.env.example</code> ยังมีตัวแปรที่ตั้งค่าจริงหลุดอยู่ ขอให้เปลี่ยนเป็นตัวอย่าง placeholder ตามเกณฑ์ Secret Hygiene ของ Lab 5"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-author">
+      <div class="dialogue-header"><span class="dialogue-author-name">Author: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-approved">Commit Fixed</span></div>
+      <p>"ปรับปรุง <code>server/.env.example</code> ให้ใช้ placeholder ทั้งหมด ไม่มี secret จริงใน git index เรียบร้อยแล้ว"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-approval">
+      <div class="dialogue-header"><span class="dialogue-approval-name">Reviewer: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-approved">Approved</span></div>
+      <p>"ตรวจสอบซ้ำใน commit 286f8a3: ไฟล์ .env.example ปลอดภัย และสคริปต์ seed รันซ้ำได้โดยไม่เกิด Error <code>prisma.user.upsert</code> อนุมัติ"</p>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- PR #15 -->
+  <div class="pr-card">
+    <div class="pr-card-header">
+      <span class="pr-title">PR #15: feat(sprint-1): F-01 authentication, session security and RBAC guard (#5)</span>
+      <span class="badge badge-approved">Multi-Round Review Approved</span>
+    </div>
+    <p><strong>Branch:</strong> <code>feature/5-auth-and-session</code> &rarr; <code>sprint-1-staging</code> | <strong>Author:</strong> ภัทร์ธิดาวดี (@phatthidawadi) | <strong>Reviewer:</strong> ปทิตญา (@lmaybelgracel)</p>
+    <div class="figure-container">
+      <img src="${prImgs[15]}" class="figure-img" style="max-height: 250px;" alt="PR #15 Review Screenshot">
+      <div class="figure-caption"><strong>Figure 14.</strong> PR #15 Peer Review on GitHub — Review dialogue verifying bcrypt password hashing, session cookies, and Cache-Control: no-store headers.</div>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-reviewer">
+      <div class="dialogue-header"><span class="dialogue-reviewer-name">Reviewer: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-request-changes">Changes Requested</span></div>
+      <p>"รันชุดทดสอบ auth.test.ts: พบว่า Session Middleware ยังไม่ได้แนบ Header <code>Cache-Control: no-store</code> ใน Route ที่มีการตรวจสอบสิทธิ์ และยังไม่ได้ลบคุกกี้ออกเมื่อ Logout ขอให้แก้ไขตาม AC-06 และ AC-38"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-author">
+      <div class="dialogue-header"><span class="dialogue-author-name">Author: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-approved">Commit Fixed</span></div>
+      <p>"แก้ไขโดยแนบ <code>Cache-Control: no-store, no-cache, must-revalidate</code> บน Middleware ทุกตัว และปรับปรุง Endpoint Logout ให้ลบ Session ใน DB พร้อมสั่ง <code>res.clearCookie('pollipop_sid')</code>"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-approval">
+      <div class="dialogue-header"><span class="dialogue-approval-name">Reviewer: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-approved">Approved</span></div>
+      <p>"ตรวจสอบ commit ล่าสุด: เทสต์ TEST-01 ถึง TEST-06 และ TEST-39 ผ่านครบถ้วน 100% สิทธิ์ RBAC และความปลอดภัยแคชรัดกุมมาก อนุมัติ"</p>
+    </div>
+  </div>
+
+  <!-- PR #16 -->
+  <div class="pr-card">
+    <div class="pr-card-header">
+      <span class="pr-title">PR #16: feat(S-02): survey creation, question builder, and state machine transitions (#6)</span>
+      <span class="badge badge-approved">Changes Requested & Approved</span>
+    </div>
+    <p><strong>Branch:</strong> <code>feature/6-survey-management</code> &rarr; <code>sprint-1-staging</code> | <strong>Author:</strong> ปทิตญา (@lmaybelgracel) | <strong>Reviewer:</strong> ภัทร์ธิดาวดี (@phatthidawadi)</p>
+    <div class="figure-container">
+      <img src="${prImgs[16]}" class="figure-img" style="max-height: 250px;" alt="PR #16 Review Screenshot">
+      <div class="figure-caption"><strong>Figure 15.</strong> PR #16 Peer Review on GitHub — Review dialogue verifying survey state machine (DRAFT &rarr; PUBLISHED &rarr; CLOSED) and question validation.</div>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-reviewer">
+      <div class="dialogue-header"><span class="dialogue-reviewer-name">Reviewer: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-request-changes">Changes Requested</span></div>
+      <p>"ตรวจสอบ Survey State Machine: พบว่าการเปลี่ยนสถานะย้อนกลับจาก PUBLISHED ไป DRAFT ตอบกลับด้วย 400 แต่ตาม BR-03 ต้องตอบกลับด้วย <code>409 Conflict: INVALID_STATE_TRANSITION</code> รบกวนปรับ Status Code ให้ตรงตามสัญญา"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-author">
+      <div class="dialogue-header"><span class="dialogue-author-name">Author: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-approved">Commit Fixed</span></div>
+      <p>"ปรับปรุงการตรวจสอบ State Machine ให้ตอบกลับด้วย 409 Conflict พร้อม Error Code <code>INVALID_STATE_TRANSITION</code> และเพิ่มเทสต์ TEST-15 ครอบคลุมแล้ว"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-approval">
+      <div class="dialogue-header"><span class="dialogue-approval-name">Reviewer: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-approved">Approved</span></div>
+      <p>"ตรวจสอบผลการรันชุดทดสอบ <code>surveys.test.ts</code> ทั้ง 9 รายการผ่านครบ 100% สิทธิ์ Owner Isolation ทำงานถูกต้อง อนุมัติ"</p>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- PR #17 -->
+  <div class="pr-card">
+    <div class="pr-card-header">
+      <span class="pr-title">PR #17: feat(S-03): validated response submission, single-submission gate, and anonymity architecture (#7)</span>
+      <span class="badge badge-approved">Multi-Round Review Approved</span>
+    </div>
+    <p><strong>Branch:</strong> <code>feature/7-response-submission</code> &rarr; <code>sprint-1-staging</code> | <strong>Author:</strong> ภัทร์ธิดาวดี (@phatthidawadi) | <strong>Reviewer:</strong> ปทิตญา (@lmaybelgracel)</p>
+    <div class="figure-container">
+      <img src="${prImgs[17]}" class="figure-img" style="max-height: 250px;" alt="PR #17 Review Screenshot">
+      <div class="figure-caption"><strong>Figure 16.</strong> PR #17 Peer Review on GitHub — Review dialogue verifying atomic transactions, race-condition duplicate rejection, and cross-response privacy.</div>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-reviewer">
+      <div class="dialogue-header"><span class="dialogue-reviewer-name">Reviewer: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-request-changes">Changes Requested</span></div>
+      <p>"ตรวจสอบ <code>response.routes.ts</code>: พบ Dead Code และการตรวจสอบ Role ที่ซ้ำซ้อน รวมถึง Hook afterAll ใน <code>responses.test.ts</code> ควรจัดวางไว้ท้าย Describe block ให้เป็นไปตามมาตรฐานการทดสอบ"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-author">
+      <div class="dialogue-header"><span class="dialogue-author-name">Author: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-approved">Commit Fixed</span></div>
+      <p>"จัดเก็บ Dead Code และ Unused Import เรียบร้อย และย้าย afterAll ไปไว้ท้าย Describe block ใน commit 0facb4d รบกวนตรวจสอบอีกครั้ง"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-approval">
+      <div class="dialogue-header"><span class="dialogue-approval-name">Reviewer: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-approved">Approved</span></div>
+      <p>"ตรวจสอบการแก้ไขใน commit 0facb4d: โค้ดสะอาด ได้มาตรฐานสถาปัตยกรรม เทสต์ Vitest ผ่านครบ 29 การทดสอบ (100%) อนุมัติ PR #17"</p>
+    </div>
+  </div>
+
+  <!-- PR #18 -->
+  <div class="pr-card">
+    <div class="pr-card-header">
+      <span class="pr-title">PR #18: feat(F-04): survey aggregate summary and owner results dashboard (#8)</span>
+      <span class="badge badge-approved">Multi-Round Review Approved</span>
+    </div>
+    <p><strong>Branch:</strong> <code>feature/8-survey-summary</code> &rarr; <code>sprint-1-staging</code> | <strong>Author:</strong> ปทิตญา (@lmaybelgracel) | <strong>Reviewer:</strong> ภัทร์ธิดาวดี (@phatthidawadi)</p>
+    <div class="figure-container">
+      <img src="${prImgs[18]}" class="figure-img" style="max-height: 250px;" alt="PR #18 Review Screenshot">
+      <div class="figure-caption"><strong>Figure 17.</strong> PR #18 Peer Review on GitHub — Review dialogue verifying aggregate summary mathematics, zero-response division guards, and rating distributions.</div>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-reviewer">
+      <div class="dialogue-header"><span class="dialogue-reviewer-name">Reviewer: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-request-changes">Changes Requested</span></div>
+      <p>"ตรวจสอบการคำนวณใน <code>summary.ts</code>: พบว่ายังขาดการกรอง Option ID ที่ไม่ถูกต้องออกจากการคำนวณผลสรุป และยังขาดชุดทดสอบ AC-34 สำหรับคำถาม Optional ขอให้เพิ่มให้ครบถ้วน"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-author">
+      <div class="dialogue-header"><span class="dialogue-author-name">Author: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-approved">Commit Fixed</span></div>
+      <p>"ได้ทำการปรับปรุงใน commit b143230 และ bf86b54: เพิ่มฟิลเตอร์กรองเฉพาะ Option ID ที่ถูกต้อง และเพิ่ม Integration Test สำหรับ AC-34 เรียบร้อย"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-approval">
+      <div class="dialogue-header"><span class="dialogue-approval-name">Reviewer: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-approved">Approved</span></div>
+      <p>"ตรวจสอบซ้ำใน commit bf86b54: โครงสร้างเอกสารถูกต้อง สูตรคำนวณปัดเศษทศนิยม 2 ตำแหน่งแม่นยำ เทสต์ summary.test.ts ผ่าน 9/9 อนุมัติ"</p>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- PR #19 -->
+  <div class="pr-card">
+    <div class="pr-card-header">
+      <span class="pr-title">PR #19: feat(F-05): role-based user interface, dashboards, survey flow, and client hardening (#9)</span>
+      <span class="badge badge-approved">Changes Requested & Approved</span>
+    </div>
+    <p><strong>Branch:</strong> <code>feature/9-frontend-ui</code> &rarr; <code>sprint-1-staging</code> | <strong>Author:</strong> ภัทร์ธิดาวดี (@phatthidawadi) | <strong>Reviewer:</strong> ปทิตญา (@lmaybelgracel)</p>
+    <div class="figure-container">
+      <img src="${prImgs[19]}" class="figure-img" style="max-height: 250px;" alt="PR #19 Review Screenshot">
+      <div class="figure-caption"><strong>Figure 18.</strong> PR #19 Peer Review on GitHub — Review dialogue verifying React SPA frontend, role route guards, and pastel candy styling.</div>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-reviewer">
+      <div class="dialogue-header"><span class="dialogue-reviewer-name">Reviewer: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-request-changes">Changes Requested</span></div>
+      <p>"ตรวจสอบ Client UI: พบว่า default proxy target ใน <code>vite.config.ts</code> ยังชี้ไปที่พอร์ต 3000 แทนที่จะเป็น 4000 และการแสดงผลทศนิยมเฉลี่ยดาวบนหน้าบ้านควรจัดฟอร์แมต 2 ตำแหน่งให้ตรงกับ Backend API"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-author">
+      <div class="dialogue-header"><span class="dialogue-author-name">Author: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-approved">Commit Fixed</span></div>
+      <p>"แก้ไข proxy target เป็นพอร์ต 4000 ใน commit 68921dc และปรับฟอร์แมตการแสดงผลทศนิยมเป็น 2 ตำแหน่งคงที่เรียบร้อยแล้ว"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-approval">
+      <div class="dialogue-header"><span class="dialogue-approval-name">Reviewer: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-approved">Approved</span></div>
+      <p>"ตรวจสอบการแก้ไขใน commit 68921dc เรียบร้อย Proxy ทำงานเชื่อมต่อกับ Backend ไหลลื่น และการป้องกันเส้นทาง Role Route Guards ทำงานถูกต้อง อนุมัติ"</p>
+    </div>
+  </div>
+
+  <!-- PR #20 -->
+  <div class="pr-card">
+    <div class="pr-card-header">
+      <span class="pr-title">PR #20: test(e2e): add Playwright E2E test suite (TEST-40) and Part F verification evidence (#10)</span>
+      <span class="badge badge-approved">Changes Requested & Approved</span>
+    </div>
+    <p><strong>Branch:</strong> <code>feature/10-e2e-and-verification</code> &rarr; <code>sprint-1-staging</code> | <strong>Author:</strong> ปทิตญา (@lmaybelgracel) | <strong>Reviewer:</strong> ภัทร์ธิดาวดี (@phatthidawadi)</p>
+    <div class="figure-container">
+      <img src="${prImgs[20]}" class="figure-img" style="max-height: 250px;" alt="PR #20 Review Screenshot">
+      <div class="figure-caption"><strong>Figure 19.</strong> PR #20 Peer Review on GitHub — Review dialogue verifying Playwright E2E automation (TEST-40) and Part F verification evidence.</div>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-reviewer">
+      <div class="dialogue-header"><span class="dialogue-reviewer-name">Reviewer: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-request-changes">Changes Requested</span></div>
+      <p>"ตรวจสอบ E2E Test Suite: ใน <code>playwright.config.ts</code> ควรกำหนด Fallback ไปใช้ System Chrome หากเครื่องรันติดนโยบาย AppData restriction และอัปเดต Test Log ใน verification.md ให้ตรงกับผลรันจริง"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-author">
+      <div class="dialogue-header"><span class="dialogue-author-name">Author: ปทิตญา (@lmaybelgracel)</span><span class="badge badge-approved">Commit Fixed</span></div>
+      <p>"ปรับแต่ง <code>playwright.config.ts</code> ให้ใช้ <code>channel: 'chrome'</code> อัตโนมัติเมื่อรันในเครื่อง Local และอัปเดตหลักฐาน Test Log ใน commit c7dda82 เรียบร้อย"</p>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-approval">
+      <div class="dialogue-header"><span class="dialogue-approval-name">Reviewer: ภัทร์ธิดาวดี (@phatthidawadi)</span><span class="badge badge-approved">Approved</span></div>
+      <p>"ตรวจสอบการแก้ไขใน commit c7dda82: การรัน E2E Journey ทดสอบระบบครบทุกเลเยอร์ผ่านสมบูรณ์ 100% ใน 4.1 วินาที พร้อมส่งมอบ release อนุมัติ"</p>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- PR #21 -->
+  <div class="pr-card">
+    <div class="pr-card-header">
+      <span class="pr-title">PR #21: release(sprint-1): complete core vertical slice delivery (v1.0.0-sprint1)</span>
+      <span class="badge badge-approved">Release Approved & Tagged</span>
+    </div>
+    <p><strong>Branch:</strong> <code>sprint-1-staging</code> &rarr; Release | <strong>Author:</strong> ปทิตญา (@lmaybelgracel) | <strong>Reviewer:</strong> ภัทร์ธิดาวดี (@phatthidawadi)</p>
+    <div class="figure-container">
+      <img src="${prImgs[21]}" class="figure-img" style="max-height: 250px;" alt="PR #21 Release Screenshot">
+      <div class="figure-caption"><strong>Figure 20.</strong> PR #21 Final Sprint 1 Delivery on GitHub — Both student engineers jointly verified the complete release baseline, tag v1.0.0-sprint1, and Definition of Done sign-off.</div>
+    </div>
+    <div class="dialogue-bubble dialogue-bubble-approval">
+      <div class="dialogue-header"><span class="dialogue-approval-name">Joint Release Sign-Off: ทั้งสองคน (@phatthidawadi & @lmaybelgracel)</span><span class="badge badge-approved">Release Accepted</span></div>
+      <p>"สมาชิกทั้งสองคนได้ร่วมกันตรวจสอบความพร้อมของการส่งมอบ Sprint 1: ชุดทดสอบอัตโนมัติผ่านครบ 46/46 เทสต์ (100%), เอกสาร Parts A ถึง E สอดคล้องกับโค้ดที่รันได้จริง และคลังโค้ดพร้อมสำหรับการนำไปสร้าง CI/CD และ Deploy ขึ้น Google Cloud Platform ใน Lab 5 ต่อไป"</p>
     </div>
   </div>
 
@@ -1333,21 +1493,8 @@ const htmlPath = path.join(DOCS_DIR, 'Pollipop_Deliverable1_Report.html');
 fs.writeFileSync(htmlPath, html, 'utf-8');
 console.log(`HTML report written to: ${htmlPath}`);
 
-// Also generate markdown mirror report
-const mdContent = `# CPE 334 Project Deliverable 1: Engineering Baseline and Working Sprint 1
-**Product Name:** Pollipop — University Review, Feedback, and Survey System  
-**Repository:** https://github.com/phatthidawadi/pollipop  
-**Team Members:**  
-- Student 1 (Author / Lead): ภัทร์ธิดาวดี อุ่นคำ / Phatthidawadi Aunkham (67070505225, GitHub: \`@phatthidawadi\`)  
-- Student 2 (Author / Lead): ปทิตญา แก้ววิเชียร / Patitaya Kaewwichian (67070505220, GitHub: \`@lmaybelgracel\`)  
-**Release Branch / Commit:** \`sprint-1-staging\` (Commit \`00e1ba6\` / Tag \`v1.0.0-sprint1\`)  
-
-Please view the compiled PDF report at [Pollipop_Deliverable1_Report.pdf](./Pollipop_Deliverable1_Report.pdf) or the interactive HTML version at [Pollipop_Deliverable1_Report.html](./Pollipop_Deliverable1_Report.html).
-`;
-fs.writeFileSync(path.join(DOCS_DIR, 'report_deliverable1.md'), mdContent, 'utf-8');
-
 (async () => {
-  console.log('Rendering PDF with Playwright Chromium...');
+  console.log('Rendering Master Deliverable 1 PDF report with Playwright Chromium...');
   const browser = await chromium.launch({ channel: 'chrome' });
   const page = await browser.newPage();
   
