@@ -1109,3 +1109,4 @@ console.log(`HTML report written to: ${htmlPath}`);
   await browser.close();
   console.log(`PDF report successfully generated at: ${pdfPath}`);
 })();
+
