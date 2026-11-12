@@ -3,8 +3,7 @@
 **Repository:** `https://github.com/phatthidawadi/pollipop`  
 **Team Members:**  
 - **Student 1 (Author / Collaborator):** ภัทร์ธิดาวดี อุ่นคำ / Phatthidawadi Aunkham (67070505225, GitHub: `@phatthidawadi`)  
-- **Student 2 (Author / Collaborator):** ปทิตญา แก้ววิเชียร / Patitaya Kaewwichian (67070505220, GitHub: `@lmaybelgracel`)  
-**Document Version:** 1.0 (Production-Ready & Lab 5 Cloud-Ready Baseline)  
+- **Student 2 (Author / Collaborator):** ปทิตญา แก้ววิเชียร / Patitaya Kaewwichian (67070505220, GitHub: `@lmaybelgracel`)    
 
 ---
 
