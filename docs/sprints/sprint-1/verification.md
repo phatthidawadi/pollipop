@@ -24,7 +24,7 @@ All 40 planned test specifications (`TEST-01` through `TEST-40`) and correspondi
 | **Server Response Submission** | `server/src/routes/response.routes.ts` | Vitest v3.2.7 | 1 | 11 | 11 | 0 | 0 | **100%** | 593 ms |
 | **Server Summary Analytics** | `server/src/summary.ts`, survey routes | Vitest v3.2.7 | 1 | 9 | 9 | 0 | 0 | **100%** | 554 ms |
 | **Client UI & Logic** | `client/src/App.tsx`, `client/src/api.ts` | Vitest v3.2.7 | 1 | 7 | 7 | 0 | 0 | **100%** | 623 ms |
-| **End-to-End Vertical Slice** | Full Stack (React + Express + Prisma) | Playwright v1.58.2 | 1 | 1 | 1 | 0 | 0 | **100%** | 5.0 s |
+| **End-to-End Vertical Slice** | Full Stack (React + Express + Prisma) | Playwright (@playwright/test ^1.49.0) | 1 | 1 | 1 | 0 | 0 | **100%** | 4.8 s |
 | **TOTAL CONSOLIDATED** | **All Core Sprint 1 Components** | **Vitest + Playwright** | **7** | **46** | **46** | **0** | **0** | **100%** | **~8.2 s** |
 
 ---
@@ -84,7 +84,7 @@ The following matrix verifies that every acceptance criterion (`AC-01` to `AC-38
 > pollipop-server@1.0.0 test
 > vitest run
 
- RUN  v3.2.7 C:/Users/lmayb/OneDrive/Desktop/pollipop/server
+ RUN  v3.2.7 pollipop/server
 
  ✓ tests/probes.test.ts (3 tests) 422ms
    ✓ S-01 System Foundation, Health & Readiness Probes > TEST-38: seedDatabase executes idempotently with bcrypt >= 10 rounds  389ms
@@ -144,23 +144,22 @@ The following matrix verifies that every acceptance criterion (`AC-01` to `AC-38
 
 ```text
 > pollipop-client@1.0.0 test
-> vitest run
+> vitest run --reporter=verbose
 
- RUN  v3.2.7 C:/Users/lmayb/OneDrive/Desktop/pollipop/client
+ RUN  v3.2.7 pollipop/client
 
- ✓ src/App.test.ts (7 tests) 3ms
-   ✓ Client Test Suite > formatPercentage formats numbers to 2 decimal places with fallback
-   ✓ Client Test Suite > formatAverageRating formats rating to 2 decimal places with null handling
-   ✓ Client Test Suite > buildRatingDistribution generates complete 1..5 frequency distribution
-   ✓ Client Test Suite > buildRatingDistribution calculates accurate percentages based on totalAnswered
-   ✓ Client Test Suite > computeSurveyStatusBadge returns correct badge label and style
-   ✓ Client Test Suite > isSurveyAnswerable returns true only for PUBLISHED surveys that are not yet answered
-   ✓ Client Test Suite > validateLoginInput rejects empty email or password locally
+ ✓ src/App.test.ts > Feature F-01..F-04: Client UI Architecture & Logic Tests (Issue #9) > API Client: apiRequest is exported and sets credentials to include 1ms
+ ✓ src/App.test.ts > Feature F-01..F-04: Client UI Architecture & Logic Tests (Issue #9) > Role Routing: redirects OWNER to /owner/surveys and RESPONDENT to /surveys 0ms
+ ✓ src/App.test.ts > Feature F-01..F-04: Client UI Architecture & Logic Tests (Issue #9) > Form Validation: Question builder enforces minimum 2 options for SINGLE_CHOICE 0ms
+ ✓ src/App.test.ts > Feature F-01..F-04: Client UI Architecture & Logic Tests (Issue #9) > Survey Lifecycle Status Badges: assigns correct status badge classes 0ms
+ ✓ src/App.test.ts > Feature F-01..F-04: Client UI Architecture & Logic Tests (Issue #9) > Summary Formatting: formats average rating and percentages to 2 decimal places and handles rating distribution 0ms
+ ✓ src/App.test.ts > Feature F-01..F-04: Client UI Architecture & Logic Tests (Issue #9) > Role-Based Route Guarding: guards against unauthorized role access to endpoints 0ms
+ ✓ src/App.test.ts > Feature F-01..F-04: Client UI Architecture & Logic Tests (Issue #9) > Security: AC-38 pageshow bfcache invalidation trigger handler is supported 0ms
 
  Test Files  1 passed (1)
       Tests  7 passed (7)
-   Start at  00:03:53
-   Duration  623ms
+   Start at  00:24:03
+   Duration  495ms
 ```
 
 ### 3.3 End-to-End User Journey Test Log (`npm run test:e2e` / `TEST-40`)
@@ -213,3 +212,4 @@ Both student engineers confirm that Sprint 1 functionality is fully tested, hard
 
 - **Student 1 (ภัทร์ธิดาวดี อุ่นคำ - 67070505225):** Verified features `S-01`, `F-01`, `F-03`, `ui` (Issues #1, #3, #5, #7, #9).
 - **Student 2 (ปทิตญา แก้ววิเชียร - 67070505220):** Verified features `S-01`, `F-02`, `F-04`, `test(e2e)` (Issues #2, #4, #6, #8, #10).
+

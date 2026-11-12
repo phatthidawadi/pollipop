@@ -22,7 +22,8 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        channel: 'chrome',
+        // Use standard bundled Chromium in CI environments; default to system 'chrome' on local environments where Application Control policies restrict AppData binaries
+        channel: process.env.CI ? undefined : (process.env.PLAYWRIGHT_CHANNEL || 'chrome'),
       },
     },
   ],
