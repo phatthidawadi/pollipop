@@ -13,6 +13,7 @@
 The complete engineering contract suite for **Sprint 1** (comprising feature-level designs for `S-01`, `F-01` through `F-04`, UI/API/Database specifications, master acceptance criteria `AC-01` to `AC-38`, software test specifications `TEST-01` to `TEST-40`, and the Product Definition of Done) is consolidated in the primary contract document:
 
 * **[`contracts.md` — Sprint 1 Master Engineering Contracts (Feature Design, AC-01..AC-38, TEST-01..TEST-40, DoD)](./contracts.md)**
+* **[`verification.md` — Sprint 1 Verification & Test Execution Evidence (Part F)](./verification.md)**
 
 ### Sprint 1 Feature Scope Summary
 

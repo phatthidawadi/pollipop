@@ -1,6 +1,6 @@
 # Pollipop — University Review, Feedback, and Survey System
 
-[![Deliverable 1 Baseline](https://img.shields.io/badge/Deliverable%201-Parts%20A--E%20Ready-success)](./docs/srs.md)
+[![Deliverable 1 Baseline](https://img.shields.io/badge/Deliverable%201-Parts%20A--F%20Ready-success)](./docs/srs.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **CPE 334 Software Engineering Project | Theme 10: Review, Feedback, and Survey System**  
@@ -27,6 +27,8 @@ All software engineering specifications, architectural designs, and sprint engin
    Three-sprint release milestones, rationale for Sprint 1 vertical slice, and balanced pair programming workflow.
 6. **[Part E: Sprint 1 Engineering Contracts (`docs/sprints/sprint-1/specification.md` & `docs/sprints/sprint-1/contracts.md`)](./docs/sprints/sprint-1/specification.md)**  
    Detailed feature designs for Sprint 1 (`S-01`, `F-01`, `F-02`, `F-03`, `F-04`), API payloads, 38 Acceptance Criteria, 40 Software Test Specifications, and Definition of Done.
+7. **[Part F: Sprint 1 Verification Evidence (`docs/sprints/sprint-1/verification.md`)](./docs/sprints/sprint-1/verification.md)**  
+   Complete automated test execution evidence across 46 passing tests (38 server, 7 client, 1 Playwright E2E vertical slice), raw execution logs, AC-to-Test traceability matrix, and Definition of Done verification.
 
 ---
 
@@ -71,5 +73,10 @@ npm run prisma:seed
 
 # 4. Start local development servers
 npm run dev
+
+# 5. Run full automated test suite
+npm run test:server   # Runs 38 Vitest unit and API integration tests
+npm run test:client   # Runs 7 Vitest frontend tests
+npm run test:e2e      # Runs Playwright full vertical slice E2E test (TEST-40)
 ```
 
