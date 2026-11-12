@@ -161,10 +161,19 @@ export function calculateSurveySummary(
 
       let sumRatings = 0;
       for (const ans of validAnswers) {
-        const rating = ans.ratingValue as 1 | 2 | 3 | 4 | 5;
-        const key = String(rating) as '1' | '2' | '3' | '4' | '5';
-        distribution[key] += 1;
-        sumRatings += rating;
+        const rating = ans.ratingValue;
+        if (
+          typeof rating === 'number' &&
+          Number.isInteger(rating) &&
+          rating >= 1 &&
+          rating <= 5
+        ) {
+          const key = String(rating) as '1' | '2' | '3' | '4' | '5';
+          if (Object.prototype.hasOwnProperty.call(distribution, key)) {
+            distribution[key] += 1;
+            sumRatings += rating;
+          }
+        }
       }
 
       // AC-31: If 0 responses / 0 answered, averageRating is null (no division by zero)
