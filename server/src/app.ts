@@ -6,6 +6,7 @@ import { prisma } from './prisma';
 import { requireAuth, setNoStoreHeaders, SESSION_COOKIE_NAME, SESSION_TTL_MS } from './auth';
 import { loginSchema, formatZodError } from './validation';
 import { surveyRouter } from './routes/survey.routes';
+import { responseRouter } from './routes/response.routes';
 
 export const app = express();
 
@@ -138,6 +139,9 @@ app.post('/api/auth/logout', async (req, res) => {
 
 // F-02: Survey Creation, Listing & Lifecycle Management Routes
 app.use('/api/surveys', surveyRouter);
+
+// F-03: Response Inspection Routes
+app.use('/api/responses', responseRouter);
 
 // NFR-04: Global Standardized Error Handling Middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
