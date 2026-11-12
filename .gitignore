@@ -15,6 +15,7 @@ dist/
 build/
 .next/
 out/
+*.tsbuildinfo
 
 # Environment Variables & Secrets (Never commit)
 .env
