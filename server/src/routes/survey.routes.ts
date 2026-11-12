@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { prisma } from '../prisma';
 import { requireAuth, requireRole, setNoStoreHeaders } from '../auth';
 import { createSurveySchema, formatZodError } from '../validation';
+import { submitSurveyResponseHandler } from './response.routes';
 
 export const surveyRouter = Router();
 
@@ -344,4 +345,8 @@ surveyRouter.post('/:id/close', requireAuth, requireRole('OWNER'), async (req: R
     });
   }
 });
+
+// F-03: POST /api/surveys/:id/responses (AC-20..AC-26, AC-36 / TEST-20..TEST-26, TEST-36, TEST-37)
+surveyRouter.post('/:id/responses', requireAuth, submitSurveyResponseHandler);
+
 
