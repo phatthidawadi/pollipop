@@ -5,6 +5,7 @@
 **Team Members:**  
 - **Student 1 (Lead Author / Collaborator):** ภัทร์ธิดาวดี อุ่นคำ / Phatthidawadi Aunkham (67070505225, GitHub: `@phatthidawadi`)  
 - **Student 2 (Co-Author / Collaborator):** ปทิตญา แก้ววิเชียร / Patitaya Kaewwichian (67070505220, GitHub: `@lmaybelgracel`)  
+**Document Version:** 1.0 (Production-Ready Baseline for Deliverable 1 & Lab 5 Cloud Deployment)  
 
 ---
 

@@ -347,6 +347,6 @@ surveyRouter.post('/:id/close', requireAuth, requireRole('OWNER'), async (req: R
 });
 
 // F-03: POST /api/surveys/:id/responses (AC-20..AC-26, AC-36 / TEST-20..TEST-26, TEST-36, TEST-37)
-surveyRouter.post('/:id/responses', requireAuth, submitSurveyResponseHandler);
+surveyRouter.post('/:id/responses', requireAuth, requireRole('RESPONDENT'), submitSurveyResponseHandler);
 
 

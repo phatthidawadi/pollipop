@@ -32,7 +32,7 @@ export async function submitSurveyResponseHandler(req: Request, res: Response) {
       include: {
         questions: {
           include: {
-            options: true,
+            options: { orderBy: { orderIndex: 'asc' } },
           },
           orderBy: { orderIndex: 'asc' },
         },
