@@ -34,6 +34,7 @@ export async function seedDatabase() {
 
   console.log('Starting idempotent database seeding...');
 
+  const users: Record<string, any> = {};
   for (const account of testAccounts) {
     const user = await prisma.user.upsert({
       where: { email: account.email },
@@ -53,19 +54,20 @@ export async function seedDatabase() {
         isActive: true,
       },
     });
+    users[account.email] = user;
     console.log(`Seeded user: ${user.email} (${user.role})`);
   }
 
-  // Seed 4 realistic university surveys for owner1 (if not already present)
-  const owner1 = await prisma.user.findUnique({
-    where: { email: 'owner1@pollipop.local' },
-  });
+  const owner1 = users['owner1@pollipop.local'];
+  const student1 = users['student1@pollipop.local'];
+  const student2 = users['student2@pollipop.local'];
 
   if (owner1) {
+    // 4 realistic university surveys matching the UI design
     const sampleSurveys = [
       {
-        title: 'ความพึงพอใจต่อการใช้บริการห้องสมุดมหาวิทยาลัย',
-        description: 'เพื่อรวบรวมความคิดเห็นของนักศึกษาสำหรับปรับปรุงพื้นที่ ทรัพยากรสารสนเทศ และบริการห้องสมุดให้ตอบโจทย์การเรียนรู้',
+        title: 'ความพึงพอใจต่อห้องสมุด',
+        description: 'พื้นที่อ่านหนังสือที่ดี เริ่มจากความคิดเห็นของเธอ',
         mode: 'IDENTIFIED',
         status: 'PUBLISHED',
         questions: [
@@ -83,14 +85,14 @@ export async function seedDatabase() {
             ],
           },
           {
-            text: 'ความพึงพอใจต่อจำนวนที่นั่งอ่านหนังสือและโต๊ะทำงาน (1 = น้อยที่สุด/ควรปรับปรุงเร่งด่วน, 5 = มากที่สุด/เพียงพอดีเยี่ยม)',
+            text: 'ความพึงพอใจต่อจำนวนที่นั่งอ่านหนังสือและโต๊ะทำงาน (1 = น้อยที่สุด, 5 = มากที่สุด)',
             type: 'RATING',
             required: true,
             orderIndex: 1,
             options: [],
           },
           {
-            text: 'ความเงียบสงบและบรรยากาศที่เอื้อต่อการอ่านหนังสือ (1 = มีเสียงรบกวนบ่อยมาก, 5 = เงียบสงบเป็นระเบียบดีเยี่ยม)',
+            text: 'ความเงียบสงบและบรรยากาศที่เอื้อต่อการอ่านหนังสือ (1 = น้อยที่สุด, 5 = มากที่สุด)',
             type: 'RATING',
             required: true,
             orderIndex: 2,
@@ -102,38 +104,39 @@ export async function seedDatabase() {
             required: true,
             orderIndex: 3,
             options: [
-              'เหมาะสมมากกับวิถีชีวิตนักศึกษา',
+              'เหมาะสมมาก',
               'เหมาะสมปานกลาง',
-              'อยากให้เปิดเช้าขึ้น (ก่อน 08:00 น.)',
-              'อยากให้ขยายเวลาปิดช่วงสอบ (เปิดบริการ 24 ชั่วโมง)',
+              'อยากให้เปิดเช้าขึ้น',
+              'อยากให้เปิด 24 ชั่วโมงช่วงสอบ',
               'ไม่เกี่ยวข้อง',
             ],
           },
           {
-            text: 'ความสะดวกรวดเร็วในการค้นหาและบริการยืม-คืนหนังสือ/สื่อการเรียนรู้ (1 = ค้นหายาก/ระบบช้า, 5 = สะดวก รวดเร็ว ทันสมัยมาก)',
+            text: 'ความสะดวกรวดเร็วในการค้นหาและบริการยืม-คืนหนังสือ (1 = น้อยที่สุด, 5 = มากที่สุด)',
             type: 'RATING',
             required: true,
             orderIndex: 4,
             options: [],
           },
           {
-            text: 'คุณต้องการให้ห้องสมุดพัฒนาหรือปรับปรุงด้านใดมากที่สุด?',
+            text: 'คุณต้องการให้ห้องสมุดปรับปรุงหรือพัฒนาเรื่องใดมากที่สุด?',
             type: 'SINGLE_CHOICE',
             required: true,
             orderIndex: 5,
             options: [
-              'เพิ่มจำนวนปลั๊กไฟและจุดชาร์จอุปกรณ์',
-              'เพิ่มห้องศึกษาค้นคว้ากลุ่ม (Group Study)',
-              'ปรับปรุงความเร็วและความเสถียรของ Wi-Fi',
-              'เพิ่มจำนวนหนังสือ วารสาร และฐานข้อมูลงานวิจัย',
+              'เพิ่มจำนวนปลั๊กไฟและจุดชาร์จ',
+              'เพิ่มห้องอ่านหนังสือกลุ่ม (Co-working)',
+              'ปรับปรุงความเร็วสัญญาณ Wi-Fi',
+              'เพิ่มหนังสือและวารสารใหม่',
               'ปรับปรุงระบบปรับอากาศและแสงสว่าง',
             ],
           },
         ],
+        seedResponses: true,
       },
       {
-        title: 'ความคิดเห็นต่อโรงอาหารและบริการอาหารในมหาวิทยาลัย',
-        description: 'เพื่อสำรวจประสบการณ์การใช้บริการโรงอาหาร คุณภาพ ราคา ความสะอาด และความหลากหลายของร้านค้าในมหาวิทยาลัย',
+        title: 'ความคิดเห็นต่อโรงอาหาร',
+        description: 'มื้ออร่อยในมหาวิทยาลัย อยากให้เป็นแบบไหน?',
         mode: 'ANONYMOUS',
         status: 'PUBLISHED',
         questions: [
@@ -143,7 +146,7 @@ export async function seedDatabase() {
             required: true,
             orderIndex: 0,
             options: [
-              'เกือบทุกวัน (4-5 วันต่อสัปดาห์)',
+              'เกือบทุกวัน (4-5 วัน)',
               '2-3 วันต่อสัปดาห์',
               '1 วันต่อสัปดาห์',
               'นานๆ ครั้ง',
@@ -151,7 +154,7 @@ export async function seedDatabase() {
             ],
           },
           {
-            text: 'โดยทั่วไปคุณใช้จ่ายค่าอาหารและเครื่องดื่มเฉลี่ยต่อมื้อเท่าไร?',
+            text: 'โดยทั่วไปคุณใช้จ่ายค่าอาหารต่อมื้อเท่าไร?',
             type: 'SINGLE_CHOICE',
             required: true,
             orderIndex: 1,
@@ -163,21 +166,21 @@ export async function seedDatabase() {
             ],
           },
           {
-            text: 'ความพึงพอใจต่อความหลากหลายของเมนูอาหาร (อาหารจานเดียว ข้าวแกง ก๋วยเตี๋ยว ฮาลาล และมังสวิรัติ) (1 = น้อยที่สุด/ตัวเลือกจำกัด, 5 = มากที่สุด/หลากหลายดีเยี่ยม)',
+            text: 'ความพึงพอใจต่อความหลากหลายของเมนูอาหาร (1 = น้อยที่สุด, 5 = มากที่สุด)',
             type: 'RATING',
             required: true,
             orderIndex: 2,
             options: [],
           },
           {
-            text: 'ความพึงพอใจต่อความสะอาดของพื้นที่รับประทานอาหาร ภาชนะ และจุดทิ้งขยะ (1 = ควรปรับปรุงเร่งด่วน, 5 = สะอาดเรียบร้อยดีเยี่ยม)',
+            text: 'ความพึงพอใจต่อความสะอาดของพื้นที่รับประทานอาหารและภาชนะ (1 = น้อยที่สุด, 5 = มากที่สุด)',
             type: 'RATING',
             required: true,
             orderIndex: 3,
             options: [],
           },
           {
-            text: 'ความคุ้มค่าของปริมาณและคุณภาพอาหารเมื่อเทียบกับราคา (1 = ไม่คุ้มค่า/แพงเกินไป, 5 = คุ้มค่าและเหมาะสมมาก)',
+            text: 'ความคุ้มค่าของปริมาณอาหารเมื่อเทียบกับราคา (1 = น้อยที่สุด, 5 = มากที่สุด)',
             type: 'RATING',
             required: true,
             orderIndex: 4,
@@ -189,18 +192,19 @@ export async function seedDatabase() {
             required: true,
             orderIndex: 5,
             options: [
-              'ที่นั่งรับประทานอาหารไม่เพียงพอ',
-              'คิวรอซื้ออาหารนานเกิน 15 นาที',
-              'สภาพอากาศร้อนอบอ้าวและการระบายอากาศไม่ดี',
-              'จุดล้างมือ กระดาษชำระ หรือน้ำดื่มไม่เพียงพอ',
+              'ที่นั่งไม่เพียงพอ',
+              'คิวรออาหารนานเกิน 15 นาที',
+              'อากาศร้อนอบอ้าว',
+              'จุดล้างมือและน้ำดื่มไม่พอ',
               'ไม่พบปัญหา',
             ],
           },
         ],
+        seedResponses: true,
       },
       {
-        title: 'ประสบการณ์การใช้งานเครือข่าย Wi-Fi ภายในมหาวิทยาลัย',
-        description: 'เพื่อสำรวจคุณภาพ ความครอบคลุม และเสถียรภาพของเครือข่ายอินเทอร์เน็ตไร้สายสำหรับนักศึกษาในทุกพื้นที่',
+        title: 'การใช้ Wi-Fi ในมหาวิทยาลัย',
+        description: 'เชื่อมต่อการเรียนรู้ให้ลื่นไหล ช่วยเล่าประสบการณ์ของเธอ',
         mode: 'IDENTIFIED',
         status: 'PUBLISHED',
         questions: [
@@ -213,7 +217,7 @@ export async function seedDatabase() {
               'ตลอดเวลาที่อยู่ในมหาวิทยาลัย',
               'เฉพาะเวลาเรียนในห้องเรียน',
               'เฉพาะเมื่อทำงานกลุ่มหรืออ่านหนังสือ',
-              'แทบไม่ได้ใช้ (ใช้สัญญาณมือถือส่วนตัว)',
+              'แทบไม่ได้ใช้ (ใช้เน็ตมือถือส่วนตัว)',
             ],
           },
           {
@@ -223,56 +227,57 @@ export async function seedDatabase() {
             orderIndex: 1,
             options: [
               'อาคารเรียนรวมและห้องบรรยาย',
-              'หอพักนักศึกษาภายในมหาวิทยาลัย',
+              'หอพักนักศึกษา',
               'ห้องสมุดและศูนย์การเรียนรู้',
-              'โรงอาหาร ลานกิจกรรม และสนามกีฬา',
+              'โรงอาหารและลานกิจกรรม',
             ],
           },
           {
-            text: 'ความเสถียรของสัญญาณ (ไม่พบปัญหาการหลุดหรือเชื่อมต่อไม่ติด) (1 = สัญญาณหลุดบ่อยมาก, 5 = เสถียรต่อเนื่องดีเยี่ยม)',
+            text: 'ความเสถียรของสัญญาณ (ไม่พบปัญหาการหลุดบ่อย) (1 = หลุดบ่อยมาก, 5 = เสถียรดีมาก)',
             type: 'RATING',
             required: true,
             orderIndex: 2,
             options: [],
           },
           {
-            text: 'ความเร็วในการดาวน์โหลดและอัปโหลดสำหรับการเรียนและการค้นคว้า (1 = ช้ามาก/โหลดไม่ขึ้น, 5 = รวดเร็วทันใจมาก)',
+            text: 'ความเร็วในการดาวน์โหลดและอัปโหลดสำหรับการเรียน (1 = ช้ามาก, 5 = รวดเร็วมาก)',
             type: 'RATING',
             required: true,
             orderIndex: 3,
             options: [],
           },
           {
-            text: 'ความสะดวกในขั้นตอนการ Login เข้าสู่ระบบเครือข่ายมหาวิทยาลัย',
+            text: 'ความสะดวกในการ Login เข้าสู่ระบบเครือข่าย',
             type: 'SINGLE_CHOICE',
             required: true,
             orderIndex: 4,
             options: [
               'สะดวกมาก (เชื่อมต่ออัตโนมัติ)',
-              'พอใช้ (ต้องยืนยันตัวตนใหม่เป็นบางครั้ง)',
+              'พอใช้ (ต้อง Login ใหม่บางครั้ง)',
               'ยุ่งยาก (หลุดบ่อยและต้อง Login ใหม่ตลอด)',
               'ไม่เคยใช้งาน',
             ],
           },
           {
-            text: 'พื้นที่ใดที่คุณต้องการให้ฝ่ายไอทีปรับปรุงและเพิ่มจุดกระจายสัญญาณด่วนที่สุด?',
+            text: 'พื้นที่ใดที่คุณต้องการให้ปรับปรุงสัญญาณด่วนที่สุด?',
             type: 'SINGLE_CHOICE',
             required: true,
             orderIndex: 5,
             options: [
-              'ห้องเรียนรวมและห้องปฏิบัติการคอมพิวเตอร์',
-              'โรงอาหารและพื้นที่นั่งพักผ่อนใต้ตึก',
-              'ลานกิจกรรมกลางแจ้งและป้ายรถรับส่ง',
-              'พื้นที่โซนหอพักนักศึกษา',
+              'ห้องเรียนรวมและห้องปฏิบัติการ',
+              'โรงอาหารและพื้นที่นั่งพักผ่อน',
+              'ลานกิจกรรมกลางแจ้ง',
+              'หอพักนักศึกษา',
             ],
           },
         ],
+        seedResponses: false,
       },
       {
-        title: 'ความสนใจในการเข้าร่วมกิจกรรมนักศึกษาและชีวิตในรั้วมหาวิทยาลัย',
-        description: 'เพื่อรวบรวมความต้องการและความสนใจของนักศึกษา สำหรับวางแผนจัดกิจกรรมเสริมทักษะและสร้างความสัมพันธ์',
+        title: 'กิจกรรมแบบไหนที่ใช่สำหรับเธอ',
+        description: 'มาช่วยออกแบบช่วงเวลาดี ๆ ในรั้วมหาวิทยาลัยด้วยกัน',
         mode: 'ANONYMOUS',
-        status: 'PUBLISHED',
+        status: 'DRAFT',
         questions: [
           {
             text: 'คุณสนใจเข้าร่วมกิจกรรมนักศึกษาประเภทใดมากที่สุด?',
@@ -280,11 +285,11 @@ export async function seedDatabase() {
             required: true,
             orderIndex: 0,
             options: [
-              'อบรมทักษะวิชาชีพและเทคโนโลยีใหม่',
+              'อบรมทักษะวิชาชีพและเทคโนโลยี',
               'กีฬา นันทนาการ และ E-Sports',
-              'ค่ายอาสาพัฒนาและบำเพ็ญประโยชน์เพื่อสังคม',
-              'เทศกาลดนตรี ศิลปวัฒนธรรม และการแสดง',
-              'ประกวดแข่งขันนวัตกรรมและแผนธุรกิจ Startup',
+              'ค่ายอาสาพัฒนาและบำเพ็ญประโยชน์',
+              'เทศกาลดนตรีและศิลปวัฒนธรรม',
+              'การแข่งขันนวัตกรรมและ Startup',
             ],
           },
           {
@@ -293,10 +298,10 @@ export async function seedDatabase() {
             required: true,
             orderIndex: 1,
             options: [
-              'วันธรรมดาช่วงเย็นหลังเลิกเรียน (หลัง 16:30 น.)',
+              'วันธรรมดาช่วงเย็น (หลัง 16:30 น.)',
               'วันเสาร์ช่วงกลางวัน',
               'วันอาทิตย์',
-              'ช่วงปิดภาคเรียนหรือวันหยุดยาว',
+              'ช่วงปิดภาคเรียน',
             ],
           },
           {
@@ -305,15 +310,15 @@ export async function seedDatabase() {
             required: true,
             orderIndex: 2,
             options: [
-              'Facebook Page คณะ / องค์การนักศึกษา',
+              'Facebook Page คณะ / มหาวิทยาลัย',
               'Instagram / TikTok สโมสรนักศึกษา',
               'LINE Official Account / OpenChat',
-              'ป้ายประกาศและจอดิจิทัลในมหาวิทยาลัย',
-              'เพื่อนและรุ่นพี่บอกต่อ',
+              'ป้ายประกาศในมหาวิทยาลัย',
+              'เพื่อนบอกต่อ',
             ],
           },
           {
-            text: 'ความน่าสนใจและความทันสมัยของหัวข้อกิจกรรมที่ผ่านมา (1 = รูปแบบเดิมซ้ำซาก/ไม่น่าสนใจ, 5 = สร้างสรรค์ ทันสมัย และน่าสนใจมาก)',
+            text: 'ความน่าสนใจและความทันสมัยของกิจกรรมที่ผ่านมา (1 = น้อยที่สุด, 5 = มากที่สุด)',
             type: 'RATING',
             required: true,
             orderIndex: 3,
@@ -325,41 +330,47 @@ export async function seedDatabase() {
             required: true,
             orderIndex: 4,
             options: [
-              'ความรู้และทักษะที่นำไปต่อยอดได้จริง',
+              'ความรู้และทักษะที่นำไปใช้ได้จริง',
               'จำนวนชั่วโมงกิจกรรมสะสม (Activity Transcript)',
-              'การได้พบปะเพื่อนใหม่และสร้างเครือข่าย',
-              'วิทยากรและของที่ระลึก',
-              'กิจกรรมตรงกับความสนใจส่วนตัว',
+              'การได้พบเพื่อนใหม่',
+              'ของรางวัลและของที่ระลึก',
+              'ความชอบส่วนตัว',
             ],
           },
           {
-            text: 'ความสะดวกรวดเร็วในการลงทะเบียนและบันทึกชั่วโมงกิจกรรม (1 = ยุ่งยาก/ตรวจสอบยาก, 5 = สะดวก รวดเร็ว บันทึกผลแม่นยำ)',
+            text: 'ความสะดวกในการบันทึกชั่วโมงกิจกรรม (1 = ยุ่งยาก, 5 = สะดวก รวดเร็ว)',
             type: 'RATING',
             required: true,
             orderIndex: 5,
             options: [],
           },
         ],
+        seedResponses: false,
       },
     ];
 
     for (const surveyData of sampleSurveys) {
-      const existing = await prisma.survey.findFirst({
+      let survey = await prisma.survey.findFirst({
         where: {
           ownerId: owner1.id,
           title: surveyData.title,
         },
+        include: {
+          questions: {
+            include: { options: true },
+          },
+        },
       });
 
-      if (!existing) {
-        await prisma.survey.create({
+      if (!survey) {
+        survey = await prisma.survey.create({
           data: {
             ownerId: owner1.id,
             title: surveyData.title,
             description: surveyData.description,
             mode: surveyData.mode,
             status: surveyData.status,
-            publishedAt: new Date(),
+            publishedAt: surveyData.status === 'PUBLISHED' ? new Date() : null,
             questions: {
               create: surveyData.questions.map((q) => ({
                 text: q.text,
@@ -375,8 +386,75 @@ export async function seedDatabase() {
               })),
             },
           },
+          include: {
+            questions: {
+              include: { options: true },
+            },
+          },
         });
-        console.log(`Seeded university survey: ${surveyData.title}`);
+        console.log(`Seeded university survey: ${surveyData.title} (${surveyData.status})`);
+      }
+
+      // Seed realistic responses (> 1 responses) if requested and currently 0 responses
+      if (surveyData.seedResponses && survey.status === 'PUBLISHED') {
+        const existingCount = await prisma.response.count({ where: { surveyId: survey.id } });
+        if (existingCount < 2 && student1 && student2) {
+          const respondents = [student1, student2];
+          for (let rIdx = 0; rIdx < respondents.length; rIdx++) {
+            const respUser = respondents[rIdx];
+            const hasParticipated = await prisma.surveyParticipation.findUnique({
+              where: {
+                surveyId_userId: {
+                  surveyId: survey.id,
+                  userId: respUser.id,
+                },
+              },
+            });
+
+            if (!hasParticipated) {
+              const respRecord = await prisma.response.create({
+                data: {
+                  surveyId: survey.id,
+                  respondentId: survey.mode === 'IDENTIFIED' ? respUser.id : null,
+                  submittedAt: new Date(Date.now() - (rIdx + 1) * 3600000),
+                },
+              });
+
+              await prisma.surveyParticipation.create({
+                data: {
+                  surveyId: survey.id,
+                  userId: respUser.id,
+                  responseId: respRecord.id,
+                  submittedAt: respRecord.submittedAt,
+                },
+              });
+
+              // Answer each question realistically
+              for (const q of survey.questions) {
+                if (q.type === 'SINGLE_CHOICE' && q.options.length > 0) {
+                  const opt = q.options[rIdx % q.options.length];
+                  await prisma.answer.create({
+                    data: {
+                      responseId: respRecord.id,
+                      questionId: q.id,
+                      optionId: opt.id,
+                    },
+                  });
+                } else if (q.type === 'RATING') {
+                  const rating = rIdx === 0 ? 5 : 4;
+                  await prisma.answer.create({
+                    data: {
+                      responseId: respRecord.id,
+                      questionId: q.id,
+                      ratingValue: rating,
+                    },
+                  });
+                }
+              }
+            }
+          }
+          console.log(`Seeded multiple responses (> 1) for: ${survey.title}`);
+        }
       }
     }
   }

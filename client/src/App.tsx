@@ -6,6 +6,7 @@ import {
   Link,
   useNavigate,
   useParams,
+  useLocation,
 } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { apiRequest, ApiErrorShape } from './api';
@@ -167,24 +168,22 @@ export const CandySuccessIllustration: React.FC = () => (
 // ---------------------------------------------------------------------------
 
 export const BookIcon: React.FC = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
   </svg>
 );
 
 export const CanteenIcon: React.FC = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
-    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
-    <line x1="6" y1="1" x2="6" y2="4" />
-    <line x1="10" y1="1" x2="10" y2="4" />
-    <line x1="14" y1="1" x2="14" y2="4" />
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 17h18" />
+    <path d="M4 17a8 8 0 0 1 16 0" />
+    <circle cx="12" cy="7" r="1.5" fill="currentColor" />
   </svg>
 );
 
 export const WifiIcon: React.FC = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M5 12.55a11 11 0 0 1 14.08 0" />
     <path d="M1.42 9a16 16 0 0 1 21.16 0" />
     <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
@@ -193,17 +192,17 @@ export const WifiIcon: React.FC = () => (
 );
 
 export const ActivityIcon: React.FC = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
     <line x1="16" y1="2" x2="16" y2="6" />
     <line x1="8" y1="2" x2="8" y2="6" />
     <line x1="3" y1="10" x2="21" y2="10" />
-    <polygon points="12 12 13.2 14.8 16 15 13.8 17 14.5 20 12 18.2 9.5 20 10.2 17 8 15 10.8 14.8 12 12" fill="currentColor" stroke="none" />
+    <polygon points="12 13 13 15 15.5 15.2 13.8 16.8 14.3 19 12 17.8 9.7 19 10.2 16.8 8.5 15.2 11 15" fill="currentColor" stroke="none" />
   </svg>
 );
 
 export const GeneralIcon: React.FC = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="10" />
     <path d="M12 16v-4" />
     <path d="M12 8h.01" />
@@ -211,25 +210,90 @@ export const GeneralIcon: React.FC = () => (
 );
 
 export const SearchIcon: React.FC = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="11" cy="11" r="8" />
     <line x1="21" y1="21" x2="16.65" y2="16.65" />
   </svg>
 );
 
 export const ShareLinkIcon: React.FC = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
   </svg>
 );
 
 export const BarChartIcon: React.FC = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <line x1="18" y1="20" x2="18" y2="10" />
     <line x1="12" y1="20" x2="12" y2="4" />
     <line x1="6" y1="20" x2="6" y2="14" />
   </svg>
+);
+
+// ---------------------------------------------------------------------------
+// Hero Banner & Candy SVGs
+// ---------------------------------------------------------------------------
+
+export const HeroCandyLeft: React.FC = () => (
+  <svg
+    width="90"
+    height="70"
+    viewBox="0 0 90 70"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="hero-candy-left"
+  >
+    <g transform="translate(10, 15) rotate(-22)">
+      <path d="M12 18L0 6L3 22L0 28L12 18Z" fill="#90CDF4" fillOpacity="0.75" />
+      <rect x="10" y="8" width="30" height="20" rx="10" fill="#76C1EA" fillOpacity="0.85" />
+      <path d="M38 18L50 6L47 22L50 28L38 18Z" fill="#90CDF4" fillOpacity="0.75" />
+      <ellipse cx="25" cy="14" rx="8" ry="3.5" fill="#ffffff" fillOpacity="0.7" />
+    </g>
+  </svg>
+);
+
+export const HeroCandyRight: React.FC = () => (
+  <svg
+    width="100"
+    height="75"
+    viewBox="0 0 100 75"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="hero-candy-right"
+  >
+    <g transform="translate(25, 12) rotate(18)">
+      <path d="M10 16L0 6L2 20L0 26L10 16Z" fill="#FBCFE8" fillOpacity="0.75" />
+      <rect x="8" y="7" width="28" height="18" rx="9" fill="#F4A2C5" fillOpacity="0.85" />
+      <path d="M34 16L44 6L42 20L44 26L34 16Z" fill="#FBCFE8" fillOpacity="0.75" />
+      <ellipse cx="22" cy="12" rx="7" ry="3" fill="#ffffff" fillOpacity="0.7" />
+    </g>
+    <path
+      d="M15 12L16.2 15.5L20 16.5L16.2 17.5L15 21L13.8 17.5L10 16.5L13.8 15.5L15 12Z"
+      fill="#F9A8D4"
+      fillOpacity="0.85"
+    />
+    <path
+      d="M75 42L75.8 44.5L78.5 45.2L75.8 45.9L75 48.5L74.2 45.9L71.5 45.2L74.2 44.5L75 42Z"
+      fill="#FDE047"
+      fillOpacity="0.8"
+    />
+  </svg>
+);
+
+export const HeroBanner: React.FC = () => (
+  <div className="hero-banner">
+    <HeroCandyLeft />
+    <HeroCandyRight />
+    <div className="hero-banner-tag">A LITTLE SPACE FOR YOUR VOICE</div>
+    <h1 className="hero-banner-title">
+      พื้นที่เล็ก ๆ สำหรับ <span className="accent">ทุกความคิดเห็น</span>
+    </h1>
+    <p className="hero-banner-subtitle">
+      แบ่งปันเรื่องเล็ก ๆ เพื่อชีวิตในมหาวิทยาลัยที่ดีขึ้น
+    </p>
+    <div className="hero-banner-quote">a little thought, a sweeter campus ♡</div>
+  </div>
 );
 
 // ---------------------------------------------------------------------------
@@ -239,6 +303,7 @@ export function getSurveyCategory(title: string, description?: string | null): {
   id: 'library' | 'canteen' | 'wifi' | 'activity' | 'general';
   name: string;
   icon: React.ReactNode;
+  circleColor: 'pink' | 'blue';
   boxClass: string;
 } {
   const text = `${title} ${description || ''}`.toLowerCase();
@@ -247,6 +312,7 @@ export function getSurveyCategory(title: string, description?: string | null): {
       id: 'library',
       name: 'ห้องสมุดและวิชาการ',
       icon: <BookIcon />,
+      circleColor: 'pink',
       boxClass: 'category-library',
     };
   }
@@ -255,6 +321,7 @@ export function getSurveyCategory(title: string, description?: string | null): {
       id: 'canteen',
       name: 'โรงอาหารและบริการ',
       icon: <CanteenIcon />,
+      circleColor: 'blue',
       boxClass: 'category-canteen',
     };
   }
@@ -263,6 +330,7 @@ export function getSurveyCategory(title: string, description?: string | null): {
       id: 'wifi',
       name: 'Wi-Fi และเครือข่าย',
       icon: <WifiIcon />,
+      circleColor: 'pink',
       boxClass: 'category-wifi',
     };
   }
@@ -271,6 +339,7 @@ export function getSurveyCategory(title: string, description?: string | null): {
       id: 'activity',
       name: 'กิจกรรมนักศึกษา',
       icon: <ActivityIcon />,
+      circleColor: 'blue',
       boxClass: 'category-activity',
     };
   }
@@ -278,6 +347,7 @@ export function getSurveyCategory(title: string, description?: string | null): {
     id: 'general',
     name: 'แบบสอบถามทั่วไป',
     icon: <GeneralIcon />,
+    circleColor: 'blue',
     boxClass: 'category-general',
   };
 }
@@ -288,47 +358,70 @@ export function getSurveyCategory(title: string, description?: string | null): {
 export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     await logout();
     navigate('/login', { replace: true });
   };
 
+  const isOwner = user?.role === 'OWNER';
+  const isMySurveysActive = location.pathname.startsWith('/owner/surveys');
+  const isAllSurveysActive =
+    location.pathname === '/surveys' ||
+    (location.pathname.startsWith('/surveys/') && !isMySurveysActive);
+
   return (
     <header className="navbar">
       <Link
-        to={user ? (user.role === 'OWNER' ? '/owner/surveys' : '/surveys') : '/login'}
+        to={user ? (isOwner ? '/owner/surveys' : '/surveys') : '/login'}
         className="brand"
       >
         <div className="brand-icon">
-          <LollipopIcon size={32} />
+          <LollipopIcon size={30} />
         </div>
-        <div className="brand-text">
-          <span className="brand-title">Pollipop</span>
-          <span className="brand-subtitle">
-            ระบบสร้างและตอบแบบสอบถามสำหรับนักศึกษามหาวิทยาลัย
-          </span>
-        </div>
+        <span className="brand-title">Pollipop</span>
       </Link>
 
       {user && (
-        <div className="nav-user">
-          <div className="nav-user-info">
-            <span data-testid="nav-user-name" style={{ fontWeight: 500 }}>
-              {user.name} ({user.department})
-            </span>
-            <span className="badge badge-role" data-testid="nav-user-role">
-              {user.role}
-            </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <nav className="nav-links">
+            <Link
+              to="/surveys"
+              className={`nav-link ${isAllSurveysActive && !isMySurveysActive ? 'active' : ''}`}
+            >
+              แบบสอบถามทั้งหมด
+            </Link>
+            <Link
+              to={isOwner ? '/owner/surveys' : '/surveys'}
+              className={`nav-link ${isMySurveysActive ? 'active' : ''}`}
+            >
+              แบบสอบถามของฉัน
+            </Link>
+          </nav>
+
+          <div className="nav-user">
+            <div className="nav-avatar" title={user.name}>
+              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+            </div>
+            <div className="nav-user-info">
+              <span data-testid="nav-user-name" style={{ fontWeight: 600 }}>
+                {user.name}
+              </span>
+              <span className="badge badge-role" data-testid="nav-user-role">
+                {user.role}
+              </span>
+            </div>
+            <button
+              type="button"
+              className="btn btn-outline"
+              style={{ fontSize: '0.82rem', padding: '0.35rem 0.75rem' }}
+              onClick={handleLogout}
+              data-testid="logout-btn"
+            >
+              ออกจากระบบ
+            </button>
           </div>
-          <button
-            type="button"
-            className="btn btn-outline"
-            onClick={handleLogout}
-            data-testid="logout-btn"
-          >
-            ออกจากระบบ
-          </button>
         </div>
       )}
     </header>
@@ -482,7 +575,6 @@ const OwnerDashboardPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'PUBLISHED' | 'DRAFT' | 'CLOSED'>('ALL');
-  const [categoryFilter, setCategoryFilter] = useState<'ALL' | 'library' | 'canteen' | 'wifi' | 'activity'>('ALL');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const loadSurveys = async () => {
@@ -530,16 +622,17 @@ const OwnerDashboardPage: React.FC = () => {
     });
   };
 
+  const counts = useMemo(() => {
+    const total = surveys.length;
+    const published = surveys.filter((s) => s.status === 'PUBLISHED').length;
+    const draft = surveys.filter((s) => s.status === 'DRAFT').length;
+    const closed = surveys.filter((s) => s.status === 'CLOSED').length;
+    return { total, published, draft, closed };
+  }, [surveys]);
+
   const filteredSurveys = useMemo(() => {
     return surveys.filter((s) => {
-      // Status filter
       if (statusFilter !== 'ALL' && s.status !== statusFilter) return false;
-      // Category filter
-      if (categoryFilter !== 'ALL') {
-        const cat = getSurveyCategory(s.title, s.description);
-        if (cat.id !== categoryFilter) return false;
-      }
-      // Search query
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         const matchTitle = s.title.toLowerCase().includes(query);
@@ -548,122 +641,100 @@ const OwnerDashboardPage: React.FC = () => {
       }
       return true;
     });
-  }, [surveys, statusFilter, categoryFilter, searchQuery]);
+  }, [surveys, statusFilter, searchQuery]);
 
   return (
     <div className="container">
+      {/* Top Hero Banner */}
+      <HeroBanner />
+
+      {/* Section Header */}
+      <div className="section-meta-tag">YOUR LITTLE CORNER</div>
       <div className="page-header">
         <div>
           <h2 className="page-title">
-            <span>จัดการแบบสอบถามของฉัน</span>
+            <span>แบบสอบถามของฉัน</span>
+            <span className="title-count-badge">{counts.total}</span>
           </h2>
           <p className="page-desc">
-            สร้าง ติดตามสถานะ เผยแพร่ และดูบทวิเคราะห์ผลสรุปแบบสอบถามภายในมหาวิทยาลัย
+            ทุกคำตอบ คือจุดเริ่มต้นของสิ่งที่ดีขึ้น
           </p>
         </div>
         <Link
           to="/owner/surveys/new"
-          className="btn btn-primary"
+          className="btn-primary-create"
           data-testid="create-survey-link"
         >
           + สร้างแบบสอบถามใหม่
         </Link>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="filter-bar">
+      {/* Search and Sort Row */}
+      <div className="controls-row">
         <div className="search-input-wrapper">
           <SearchIcon />
           <input
             type="text"
             className="search-input"
-            placeholder="ค้นหาแบบสอบถามด้วยชื่อหรือคำอธิบาย..."
+            placeholder="ค้นหาแบบสอบถาม..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+          <span className="search-shortcut-pill">/</span>
         </div>
 
-        <div className="filter-pills">
-          <button
-            type="button"
-            className={`filter-pill ${statusFilter === 'ALL' ? 'active' : ''}`}
-            onClick={() => setStatusFilter('ALL')}
-          >
-            สถานะทั้งหมด ({surveys.length})
-          </button>
-          <button
-            type="button"
-            className={`filter-pill ${statusFilter === 'PUBLISHED' ? 'active' : ''}`}
-            onClick={() => setStatusFilter('PUBLISHED')}
-          >
-            เปิดรับคำตอบ
-          </button>
-          <button
-            type="button"
-            className={`filter-pill ${statusFilter === 'DRAFT' ? 'active' : ''}`}
-            onClick={() => setStatusFilter('DRAFT')}
-          >
-            ฉบับร่าง
-          </button>
-          <button
-            type="button"
-            className={`filter-pill ${statusFilter === 'CLOSED' ? 'active' : ''}`}
-            onClick={() => setStatusFilter('CLOSED')}
-          >
-            ปิดรับคำตอบ
-          </button>
+        <div className="sort-dropdown">
+          <span>เรียงตาม</span>
+          <span className="value">ล่าสุด</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
         </div>
       </div>
 
-      {/* Secondary Category Filter */}
-      <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '0.84rem', color: 'var(--text-muted)', alignSelf: 'center', marginRight: '0.25rem' }}>
-          หมวดหมู่:
-        </span>
-        <button
-          type="button"
-          className={`filter-pill ${categoryFilter === 'ALL' ? 'active' : ''}`}
-          style={{ fontSize: '0.8rem', padding: '0.25rem 0.65rem' }}
-          onClick={() => setCategoryFilter('ALL')}
-        >
-          ทั้งหมด
-        </button>
-        <button
-          type="button"
-          className={`filter-pill ${categoryFilter === 'library' ? 'active' : ''}`}
-          style={{ fontSize: '0.8rem', padding: '0.25rem 0.65rem' }}
-          onClick={() => setCategoryFilter('library')}
-        >
-          ห้องสมุด
-        </button>
-        <button
-          type="button"
-          className={`filter-pill ${categoryFilter === 'canteen' ? 'active' : ''}`}
-          style={{ fontSize: '0.8rem', padding: '0.25rem 0.65rem' }}
-          onClick={() => setCategoryFilter('canteen')}
-        >
-          โรงอาหาร
-        </button>
-        <button
-          type="button"
-          className={`filter-pill ${categoryFilter === 'wifi' ? 'active' : ''}`}
-          style={{ fontSize: '0.8rem', padding: '0.25rem 0.65rem' }}
-          onClick={() => setCategoryFilter('wifi')}
-        >
-          Wi-Fi & ไอที
-        </button>
-        <button
-          type="button"
-          className={`filter-pill ${categoryFilter === 'activity' ? 'active' : ''}`}
-          style={{ fontSize: '0.8rem', padding: '0.25rem 0.65rem' }}
-          onClick={() => setCategoryFilter('activity')}
-        >
-          กิจกรรมนักศึกษา
-        </button>
+      {/* Status Filter Tabs */}
+      <div className="tabs-bar">
+        <div className="tabs-group">
+          <button
+            type="button"
+            className={`tab-btn ${statusFilter === 'ALL' ? 'active' : ''}`}
+            onClick={() => setStatusFilter('ALL')}
+          >
+            <span>ทั้งหมด</span>
+            <span className="tab-pill">{counts.total}</span>
+          </button>
+          <button
+            type="button"
+            className={`tab-btn ${statusFilter === 'PUBLISHED' ? 'active' : ''}`}
+            onClick={() => setStatusFilter('PUBLISHED')}
+          >
+            <span>เปิดรับคำตอบ</span>
+            <span className="tab-pill">{counts.published}</span>
+          </button>
+          <button
+            type="button"
+            className={`tab-btn ${statusFilter === 'DRAFT' ? 'active' : ''}`}
+            onClick={() => setStatusFilter('DRAFT')}
+          >
+            <span>ฉบับร่าง</span>
+            <span className="tab-pill">{counts.draft}</span>
+          </button>
+          <button
+            type="button"
+            className={`tab-btn ${statusFilter === 'CLOSED' ? 'active' : ''}`}
+            onClick={() => setStatusFilter('CLOSED')}
+          >
+            <span>ปิดรับคำตอบ</span>
+            <span className="tab-pill">{counts.closed}</span>
+          </button>
+        </div>
+        <div className="tabs-total-count">
+          {filteredSurveys.length} แบบสอบถาม
+        </div>
       </div>
 
       {copiedId && (
-        <div className="alert-success" style={{ padding: '0.65rem 1rem', marginBottom: '1rem' }}>
+        <div className="alert-success" style={{ padding: '0.65rem 1rem', marginBottom: '1rem', fontSize: '0.88rem' }}>
           คัดลอกลิงก์แบบสอบถามสำหรับแชร์ให้นักศึกษาเรียบร้อยแล้ว!
         </div>
       )}
@@ -688,7 +759,7 @@ const OwnerDashboardPage: React.FC = () => {
               : 'ลองปรับคำค้นหาหรือตัวกรองสถานะเพื่อดูรายการแบบสอบถามอื่น'}
           </div>
           {surveys.length === 0 && (
-            <Link to="/owner/surveys/new" className="btn btn-primary">
+            <Link to="/owner/surveys/new" className="btn-primary-create">
               + สร้างแบบสอบถามแรกของคุณ
             </Link>
           )}
@@ -698,102 +769,105 @@ const OwnerDashboardPage: React.FC = () => {
           const category = getSurveyCategory(s.title, s.description);
           return (
             <div className="card" key={s.id} data-testid={`survey-card-${s.id}`}>
-              <div className="survey-card-header">
-                {/* Category Icon */}
-                <div className={`category-icon-box ${category.boxClass}`}>
-                  {category.icon}
-                </div>
-
-                {/* Survey Content */}
-                <div style={{ flex: 1, minWidth: 260 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
-                    <span className="badge badge-category" style={{ fontSize: '0.75rem' }}>
-                      {category.name}
-                    </span>
-                    <span
-                      className={`badge ${
-                        s.status === 'DRAFT'
-                          ? 'badge-draft'
+              <div className="survey-card-layout">
+                {/* Left section: Icon + Info */}
+                <div className="survey-card-left">
+                  <div className={`category-icon-circle ${category.circleColor}`}>
+                    {category.icon}
+                  </div>
+                  <div className="survey-details">
+                    <h3 className="survey-title-text">{s.title}</h3>
+                    {s.description && (
+                      <p className="survey-desc-text">{s.description}</p>
+                    )}
+                    <div className="survey-meta-row">
+                      <span
+                        className={`badge ${
+                          s.status === 'DRAFT'
+                            ? 'badge-draft'
+                            : s.status === 'PUBLISHED'
+                            ? 'badge-published'
+                            : 'badge-closed'
+                        }`}
+                        data-testid={`survey-status-${s.id}`}
+                      >
+                        {s.status === 'DRAFT'
+                          ? 'ฉบับร่าง (DRAFT)'
                           : s.status === 'PUBLISHED'
-                          ? 'badge-published'
-                          : 'badge-closed'
-                      }`}
-                      data-testid={`survey-status-${s.id}`}
-                    >
-                      {s.status === 'DRAFT'
-                        ? 'ฉบับร่าง (DRAFT)'
-                        : s.status === 'PUBLISHED'
-                        ? 'เปิดรับคำตอบ (PUBLISHED)'
-                        : 'ปิดรับคำตอบ (CLOSED)'}
-                    </span>
-                    <span className="badge badge-mode">
-                      {s.mode === 'ANONYMOUS' ? 'ไม่ระบุชื่อ (ANONYMOUS)' : 'ระบุชื่อ (IDENTIFIED)'}
-                    </span>
-                  </div>
-
-                  <h3 style={{ margin: '0 0 0.35rem 0', fontSize: '1.15rem' }}>{s.title}</h3>
-                  {s.description && (
-                    <p style={{ margin: '0 0 0.6rem 0', color: 'var(--text-muted)', fontSize: '0.92rem' }}>
-                      {s.description}
-                    </p>
-                  )}
-
-                  <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    <span>จำนวน {s.questionCount} คำถาม</span>
-                    <span>•</span>
-                    <span style={{ fontWeight: 600, color: 'var(--text-body)' }}>
-                      ผู้ตอบแล้ว {s.responseCount} คน
-                    </span>
+                          ? 'เปิดรับคำตอบ (PUBLISHED)'
+                          : 'ปิดรับคำตอบ (CLOSED)'}
+                      </span>
+                      <span className="meta-dot">•</span>
+                      <span>{s.questionCount} คำถาม</span>
+                      <span className="meta-dot">•</span>
+                      <span>
+                        {s.responseCount > 0 ? `ผู้ตอบแล้ว ${s.responseCount} คน` : 'ยังไม่มีผู้ตอบ'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                {/* Right section: Action Buttons */}
+                <div className="card-actions-group">
+                  <button
+                    type="button"
+                    className="icon-action-btn"
+                    onClick={() => handleShareLink(s.id)}
+                    title="คัดลอกลิงก์สำหรับแชร์"
+                  >
+                    <ShareLinkIcon />
+                  </button>
+
                   {s.status === 'DRAFT' && (
                     <button
                       type="button"
-                      className="btn btn-secondary"
+                      className="btn-publish-draft"
                       onClick={() => handlePublish(s.id)}
                       data-testid={`publish-btn-${s.id}`}
                     >
                       เผยแพร่ (Publish)
                     </button>
                   )}
+
                   {s.status === 'PUBLISHED' && (
-                    <>
-                      <button
-                        type="button"
-                        className="btn btn-outline"
-                        onClick={() => handleShareLink(s.id)}
-                        title="คัดลอกลิงก์สำหรับแชร์"
-                      >
-                        <ShareLinkIcon />
-                        แชร์ลิงก์
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-danger"
-                        onClick={() => handleClose(s.id)}
-                        data-testid={`close-btn-${s.id}`}
-                      >
-                        ปิดรับคำตอบ (Close)
-                      </button>
-                    </>
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      style={{ fontSize: '0.8rem', padding: '0.35rem 0.65rem' }}
+                      onClick={() => handleClose(s.id)}
+                      data-testid={`close-btn-${s.id}`}
+                    >
+                      ปิดรับคำตอบ (Close)
+                    </button>
                   )}
+
                   <Link
                     to={`/owner/surveys/${s.id}/summary`}
-                    className="btn btn-outline"
+                    className="summary-btn"
                     data-testid={`summary-link-${s.id}`}
                   >
                     <BarChartIcon />
-                    ดูผลสรุป (Summary)
+                    <span>ดูผลสรุป (Summary)</span>
                   </Link>
+
+                  <button
+                    type="button"
+                    className="icon-action-btn"
+                    title="ตัวเลือกเพิ่มเติม"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
           );
         })
       )}
+
+      {/* Sweet Footer Note */}
+      <div className="sweet-footer">ความคิดเห็นของเธอมีความหมายเสมอ ♡ 🍬</div>
     </div>
   );
 };
@@ -1115,6 +1189,13 @@ const RespondentSurveyListPage: React.FC = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  const counts = useMemo(() => {
+    const total = surveys.length;
+    const unanswered = surveys.filter((s) => !s.answered).length;
+    const answered = surveys.filter((s) => s.answered).length;
+    return { total, unanswered, answered };
+  }, [surveys]);
+
   const filteredSurveys = useMemo(() => {
     return surveys.filter((s) => {
       if (filterAnswered === 'UNANSWERED' && s.answered) return false;
@@ -1131,10 +1212,16 @@ const RespondentSurveyListPage: React.FC = () => {
 
   return (
     <div className="container">
+      {/* Top Hero Banner */}
+      <HeroBanner />
+
+      {/* Section Header */}
+      <div className="section-meta-tag">CAMPUS VOICES</div>
       <div className="page-header">
         <div>
           <h2 className="page-title">
-            <span>แบบสอบถามมหาวิทยาลัยที่เปิดรับคำตอบ</span>
+            <span>แบบสอบถามทั้งหมด</span>
+            <span className="title-count-badge">{counts.total}</span>
           </h2>
           <p className="page-desc">
             ร่วมส่งเสียงสะท้อนเพื่อพัฒนาคุณภาพชีวิต การเรียนรู้ และสิ่งอำนวยความสะดวกในมหาวิทยาลัย
@@ -1142,8 +1229,8 @@ const RespondentSurveyListPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="filter-bar">
+      {/* Search and Sort Row */}
+      <div className="controls-row">
         <div className="search-input-wrapper">
           <SearchIcon />
           <input
@@ -1153,30 +1240,48 @@ const RespondentSurveyListPage: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+          <span className="search-shortcut-pill">/</span>
         </div>
 
-        <div className="filter-pills">
+        <div className="sort-dropdown">
+          <span>เรียงตาม</span>
+          <span className="value">ล่าสุด</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Tabs Bar */}
+      <div className="tabs-bar">
+        <div className="tabs-group">
           <button
             type="button"
-            className={`filter-pill ${filterAnswered === 'ALL' ? 'active' : ''}`}
+            className={`tab-btn ${filterAnswered === 'ALL' ? 'active' : ''}`}
             onClick={() => setFilterAnswered('ALL')}
           >
-            ทั้งหมด ({surveys.length})
+            <span>ทั้งหมด</span>
+            <span className="tab-pill">{counts.total}</span>
           </button>
           <button
             type="button"
-            className={`filter-pill ${filterAnswered === 'UNANSWERED' ? 'active' : ''}`}
+            className={`tab-btn ${filterAnswered === 'UNANSWERED' ? 'active' : ''}`}
             onClick={() => setFilterAnswered('UNANSWERED')}
           >
-            ยังไม่ได้ตอบ ({surveys.filter((s) => !s.answered).length})
+            <span>ยังไม่ได้ตอบ</span>
+            <span className="tab-pill">{counts.unanswered}</span>
           </button>
           <button
             type="button"
-            className={`filter-pill ${filterAnswered === 'ANSWERED' ? 'active' : ''}`}
+            className={`tab-btn ${filterAnswered === 'ANSWERED' ? 'active' : ''}`}
             onClick={() => setFilterAnswered('ANSWERED')}
           >
-            ตอบแล้ว ({surveys.filter((s) => s.answered).length})
+            <span>ตอบแล้ว</span>
+            <span className="tab-pill">{counts.answered}</span>
           </button>
+        </div>
+        <div className="tabs-total-count">
+          {filteredSurveys.length} แบบสอบถาม
         </div>
       </div>
 
@@ -1201,47 +1306,40 @@ const RespondentSurveyListPage: React.FC = () => {
           const category = getSurveyCategory(s.title, s.description);
           return (
             <div className="card" key={s.id} data-testid={`respondent-survey-${s.id}`}>
-              <div className="survey-card-header">
-                {/* Category Icon */}
-                <div className={`category-icon-box ${category.boxClass}`}>
-                  {category.icon}
-                </div>
-
-                {/* Content */}
-                <div style={{ flex: 1, minWidth: 260 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
-                    <span className="badge badge-category" style={{ fontSize: '0.75rem' }}>
-                      {category.name}
-                    </span>
-                    <span
-                      className={`badge ${s.answered ? 'badge-published' : 'badge-draft'}`}
-                      data-testid={`answered-badge-${s.id}`}
-                    >
-                      {s.answered ? 'ตอบแล้ว' : 'ยังไม่ได้ตอบ'}
-                    </span>
-                    <span className="badge badge-mode">
-                      {s.mode === 'ANONYMOUS' ? 'ไม่ระบุชื่อผู้ตอบ' : 'ระบุตัวตน'}
-                    </span>
+              <div className="survey-card-layout">
+                {/* Left section: Icon + Info */}
+                <div className="survey-card-left">
+                  <div className={`category-icon-circle ${category.circleColor}`}>
+                    {category.icon}
                   </div>
-
-                  <h3 style={{ margin: '0 0 0.35rem 0', fontSize: '1.15rem' }}>{s.title}</h3>
-                  {s.description && (
-                    <p style={{ margin: '0 0 0.6rem 0', color: 'var(--text-muted)', fontSize: '0.92rem' }}>
-                      {s.description}
-                    </p>
-                  )}
-
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    จำนวน {s.questionCount} คำถาม
+                  <div className="survey-details">
+                    <h3 className="survey-title-text">{s.title}</h3>
+                    {s.description && (
+                      <p className="survey-desc-text">{s.description}</p>
+                    )}
+                    <div className="survey-meta-row">
+                      <span
+                        className={`badge ${s.answered ? 'badge-published' : 'badge-draft'}`}
+                        data-testid={`answered-badge-${s.id}`}
+                      >
+                        {s.answered ? 'ตอบแล้ว' : 'ยังไม่ได้ตอบ'}
+                      </span>
+                      <span className="meta-dot">•</span>
+                      <span>{s.questionCount} คำถาม</span>
+                      <span className="meta-dot">•</span>
+                      <span className="badge badge-role" style={{ fontSize: '0.72rem', padding: '0.1rem 0.45rem' }}>
+                        {s.mode === 'ANONYMOUS' ? 'ไม่ระบุชื่อ' : 'ระบุตัวตน'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                {/* Right section: Action Buttons */}
+                <div className="card-actions-group">
                   {!s.answered ? (
                     <Link
                       to={`/surveys/${s.id}`}
-                      className="btn btn-primary"
+                      className="btn-primary-create"
                       data-testid={`take-survey-link-${s.id}`}
                     >
                       ทำแบบสอบถาม
@@ -1251,7 +1349,7 @@ const RespondentSurveyListPage: React.FC = () => {
                       {s.responseId && (
                         <Link
                           to={`/responses/${s.responseId}`}
-                          className="btn btn-secondary"
+                          className="summary-btn"
                           data-testid={`view-response-link-${s.id}`}
                         >
                           ดูคำตอบที่ส่งแล้ว
@@ -1259,10 +1357,14 @@ const RespondentSurveyListPage: React.FC = () => {
                       )}
                       <Link
                         to={`/surveys/${s.id}`}
-                        className="btn btn-outline"
+                        className="icon-action-btn"
                         data-testid={`revisit-survey-link-${s.id}`}
+                        title="ดูหน้ารายละเอียด"
                       >
-                        ดูหน้ารายละเอียด
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
                       </Link>
                     </>
                   )}
@@ -1272,6 +1374,9 @@ const RespondentSurveyListPage: React.FC = () => {
           );
         })
       )}
+
+      {/* Sweet Footer Note */}
+      <div className="sweet-footer">ความคิดเห็นของเธอมีความหมายเสมอ ♡ 🍬</div>
     </div>
   );
 };
@@ -1381,9 +1486,11 @@ const TakeSurveyPage: React.FC = () => {
         {submittedResponse ? (
           <div className="alert-success" data-testid="submit-success" style={{ textAlign: 'center', padding: '2rem' }}>
             <CandySuccessIllustration />
-            <h3 style={{ margin: '0.5rem 0 0.35rem 0', fontSize: '1.35rem' }}>ส่งคำตอบแบบสอบถามสำเร็จ!</h3>
+            <h3 style={{ margin: '0.5rem 0 0.35rem 0', fontSize: '1.45rem', color: '#414C63' }}>
+              ขอบคุณที่แบ่งปันนะ ♡
+            </h3>
             <p style={{ margin: '0 0 1rem 0', color: 'var(--text-body)', fontSize: '0.92rem' }}>
-              ขอบคุณสำหรับความคิดเห็นอันมีค่าของคุณ ข้อมูลนี้จะนำไปใช้พัฒนาและปรับปรุงมหาวิทยาลัยให้ดียิ่งขึ้น
+              ส่งคำตอบแบบสอบถามสำเร็จ! ทุกความคิดเห็นของเธอมีความหมายต่อมหาวิทยาลัยเสมอ
             </p>
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
               {survey.mode === 'IDENTIFIED' && (
