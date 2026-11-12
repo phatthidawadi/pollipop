@@ -30,6 +30,18 @@ export async function seedDatabase() {
       role: 'RESPONDENT',
       department: 'ENV',
     },
+    {
+      email: 'student3@pollipop.local',
+      name: 'Student 3 (Respondent C)',
+      role: 'RESPONDENT',
+      department: 'CPE',
+    },
+    {
+      email: 'student4@pollipop.local',
+      name: 'Student 4 (Respondent D)',
+      role: 'RESPONDENT',
+      department: 'ME',
+    },
   ];
 
   console.log('Starting idempotent database seeding...');
@@ -271,7 +283,7 @@ export async function seedDatabase() {
             ],
           },
         ],
-        seedResponses: false,
+        seedResponses: true,
       },
       {
         title: 'กิจกรรมแบบไหนที่ใช่สำหรับเธอ',
@@ -395,66 +407,72 @@ export async function seedDatabase() {
         console.log(`Seeded university survey: ${surveyData.title} (${surveyData.status})`);
       }
 
-      // Seed realistic responses (> 1 responses) if requested and currently 0 responses
+      // Seed realistic responses (> 1 responses) if requested
       if (surveyData.seedResponses && survey.status === 'PUBLISHED') {
-        const existingCount = await prisma.response.count({ where: { surveyId: survey.id } });
-        if (existingCount < 2 && student1 && student2) {
-          const respondents = [student1, student2];
-          for (let rIdx = 0; rIdx < respondents.length; rIdx++) {
-            const respUser = respondents[rIdx];
-            const hasParticipated = await prisma.surveyParticipation.findUnique({
-              where: {
-                surveyId_userId: {
-                  surveyId: survey.id,
-                  userId: respUser.id,
-                },
+        const studentAccounts = [
+          users['student1@pollipop.local'],
+          users['student2@pollipop.local'],
+          users['student3@pollipop.local'],
+          users['student4@pollipop.local'],
+        ].filter(Boolean);
+
+        for (let rIdx = 0; rIdx < studentAccounts.length; rIdx++) {
+          const respUser = studentAccounts[rIdx];
+          const hasParticipated = await prisma.surveyParticipation.findUnique({
+            where: {
+              surveyId_userId: {
+                surveyId: survey.id,
+                userId: respUser.id,
+              },
+            },
+          });
+
+          if (!hasParticipated) {
+            const respRecord = await prisma.response.create({
+              data: {
+                surveyId: survey.id,
+                respondentId: survey.mode === 'IDENTIFIED' ? respUser.id : null,
+                submittedAt: new Date(Date.now() - (rIdx + 1) * 3600000),
               },
             });
 
-            if (!hasParticipated) {
-              const respRecord = await prisma.response.create({
-                data: {
-                  surveyId: survey.id,
-                  respondentId: survey.mode === 'IDENTIFIED' ? respUser.id : null,
-                  submittedAt: new Date(Date.now() - (rIdx + 1) * 3600000),
-                },
-              });
+            await prisma.surveyParticipation.create({
+              data: {
+                surveyId: survey.id,
+                userId: respUser.id,
+                responseId: respRecord.id,
+                submittedAt: respRecord.submittedAt,
+              },
+            });
 
-              await prisma.surveyParticipation.create({
-                data: {
-                  surveyId: survey.id,
-                  userId: respUser.id,
-                  responseId: respRecord.id,
-                  submittedAt: respRecord.submittedAt,
-                },
-              });
-
-              // Answer each question realistically
-              for (const q of survey.questions) {
-                if (q.type === 'SINGLE_CHOICE' && q.options.length > 0) {
-                  const opt = q.options[rIdx % q.options.length];
-                  await prisma.answer.create({
-                    data: {
-                      responseId: respRecord.id,
-                      questionId: q.id,
-                      optionId: opt.id,
-                    },
-                  });
-                } else if (q.type === 'RATING') {
-                  const rating = rIdx === 0 ? 5 : 4;
-                  await prisma.answer.create({
-                    data: {
-                      responseId: respRecord.id,
-                      questionId: q.id,
-                      ratingValue: rating,
-                    },
-                  });
-                }
+            // Answer each question realistically with distributed values
+            for (let qIdx = 0; qIdx < survey.questions.length; qIdx++) {
+              const q = survey.questions[qIdx];
+              if (q.type === 'SINGLE_CHOICE' && q.options.length > 0) {
+                const optIndex = (rIdx + qIdx) % q.options.length;
+                const opt = q.options[optIndex];
+                await prisma.answer.create({
+                  data: {
+                    responseId: respRecord.id,
+                    questionId: q.id,
+                    optionId: opt.id,
+                  },
+                });
+              } else if (q.type === 'RATING') {
+                const ratings = [5, 4, 5, 4];
+                const rating = ratings[(rIdx + qIdx) % ratings.length];
+                await prisma.answer.create({
+                  data: {
+                    responseId: respRecord.id,
+                    questionId: q.id,
+                    ratingValue: rating,
+                  },
+                });
               }
             }
           }
-          console.log(`Seeded multiple responses (> 1) for: ${survey.title}`);
         }
+        console.log(`Seeded multiple responses (> 1) for: ${survey.title}`);
       }
     }
   }
