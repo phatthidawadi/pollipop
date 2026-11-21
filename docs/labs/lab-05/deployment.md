@@ -50,7 +50,7 @@ The application configuration strictly decouples code from environment secrets a
 | `NODE_ENV` | Production & Local | Application runtime environment (`development` / `production`) | Environment Variable |
 | `PORT` | Production & Local | Port to bind server (`3000` default, dynamically injected by Cloud Run) | Environment Variable |
 | `DATABASE_URL` | Production & Local | PostgreSQL connection string (Unix domain socket in production) | Secret Manager (`sda0ec11f-database-url`) |
-| `SESSION_SECRET` | Production & Local | Cookie signing secret for session persistence | Secret Manager (`sda0ec11f-app-secret-1`) |
+| `SESSION_SECRET` | Optional (Reserved) | Optional cookie signing secret (Pollipop uses DB-backed opaque session IDs; not mounted in `deploy.sh` until populated via `./kit.sh secrets add 1`) | Secret Manager (`sda0ec11f-app-secret-1`, optional) |
 | `ADMIN_PASSWORD` | Production & Local | Initial seed administrative account password | Secret Manager (`sda0ec11f-admin-password`) |
 | `DEMO_USER_PASSWORD` | Production & Local | Password for seeded demonstration accounts | Secret Manager (`sda0ec11f-demo-password`) |
 | `CORS_ORIGIN` | Production & Local | Permitted CORS origins for API requests | Environment Variable |
@@ -98,6 +98,17 @@ Pollipop is packaged with Docker adhering to least-privilege non-root execution 
 - **Stage 1 (`client-builder`):** Compiles Vite React SPA (`npm run build`) into production static assets (`/app/client/dist`).
 - **Stage 2 (`server-builder`):** Generates Prisma client (`prisma generate`) and compiles TypeScript (`tsc`) into CommonJS bytecode (`dist/`).
 - **Stage 3 (`production`):** Minimal `node:24-alpine` runtime copying only compiled artifacts, running as unprivileged user `node` on port `3000` with `./docker-entrypoint.sh`.
+
+---
+
+## 8. Continuous Integration Quality Gate (Issue 14 / Episode 4)
+
+GitHub Actions workflow `.github/workflows/ci-docker.yml` enforces automated verification on every Pull Request targeting `lab-5-staging` and `main`, and is reusable by `deploy.yml` via `workflow_call`:
+
+- **Required Check Job ID:** `test-and-docker`
+- **Database Service:** Ephemeral `postgres:16-alpine` container executing real Prisma migrations (`prisma migrate deploy`) and all 38 server integration tests + 7 client unit tests.
+- **Deployment Script Verification:** Runs `DRY_RUN=1 bash deploy/deploy.sh`, offline stub tests (`deploy/tests/test_deploy_stub.sh`, `deploy/tests/test_release_stub.sh`), and Python syntax verification on `deploy/smoke_test.py`.
+- **Container Build Gate:** Builds the unified multi-stage `Dockerfile` and asserts the image runs as non-root user `node`.
 
 
 
