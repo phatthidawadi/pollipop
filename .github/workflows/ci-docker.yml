@@ -1,0 +1,95 @@
+# ##############################################################################
+# CI Quality Gate — Tests, Deployment Script Validation, and Docker Build
+# ##############################################################################
+# DO NOT RENAME job `test-and-docker`:
+#   - Called by `.github/workflows/deploy.yml` via `workflow_call`
+#   - Required status check in `protect-main` branch ruleset
+# ##############################################################################
+
+name: CI (Tests & Docker)
+
+on:
+  pull_request:
+    branches: [main, lab-5-staging]
+  push:
+    branches: [main, lab-5-staging]
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-docker:
+    name: test-and-docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: pollipop
+          POSTGRES_PASSWORD: pollipop_ci_password
+          POSTGRES_DB: pollipop_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U pollipop -d pollipop_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DATABASE_URL: postgresql://pollipop:pollipop_ci_password@localhost:5432/pollipop_test?schema=public
+      SESSION_SECRET: ci-test-session-secret-not-for-production
+      ADMIN_PASSWORD: ChangeMeInDev123!
+      DEMO_USER_PASSWORD: ChangeMeInDev123!
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: |
+            server/package-lock.json
+            client/package-lock.json
+
+      - name: Install server and client dependencies
+        run: |
+          npm --prefix server ci
+          npm --prefix client ci
+
+      - name: Generate Prisma client and deploy PostgreSQL migrations
+        run: |
+          npm --prefix server run prisma:generate
+          npm --prefix server run prisma:migrate
+
+      - name: Run server integration tests (PostgreSQL)
+        run: npm --prefix server test
+
+      - name: Run client unit tests
+        run: npm --prefix client test
+
+      - name: Build server and client production bundles
+        run: |
+          npm --prefix server run build
+          npm --prefix client run build
+
+      - name: Validate deployment scripts offline
+        run: |
+          chmod +x deploy/deploy.sh deploy/release.sh deploy/tests/test_deploy_stub.sh deploy/tests/test_release_stub.sh
+          DRY_RUN=1 bash deploy/deploy.sh
+          bash deploy/tests/test_deploy_stub.sh
+          bash deploy/tests/test_release_stub.sh
+          python3 -m py_compile deploy/smoke_test.py
+
+      - name: Build unified production Docker image and verify non-root user
+        run: |
+          docker build --tag pollipop:ci .
+          IMAGE_USER="$(docker image inspect --format '{{.Config.User}}' pollipop:ci)"
+          echo "Container runtime user: ${IMAGE_USER}"
+          test "$IMAGE_USER" = "node"
