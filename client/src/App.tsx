@@ -479,7 +479,7 @@ const LoginPage: React.FC = () => {
           </div>
           <h2 style={{ margin: '0.3rem 0 0.25rem 0', fontSize: '1.25rem' }}>เข้าสู่ระบบ</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', margin: 0 }}>
-            เลือกเข้าสู่ระบบในบทบาทอาจารย์ผู้สร้าง หรือนักศึกษาผู้ตอบแบบสอบถาม
+            เลือกเข้าสู่ระบบในบทบาทอาจารย์ผู้สร้าง หรือนักศึกษาผู้ตอบแบบสอบถาม (Release 2)
           </p>
         </div>
 
