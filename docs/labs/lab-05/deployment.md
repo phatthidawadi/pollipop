@@ -110,5 +110,32 @@ GitHub Actions workflow `.github/workflows/ci-docker.yml` enforces automated ver
 - **Deployment Script Verification:** Runs `DRY_RUN=1 bash deploy/deploy.sh`, offline stub tests (`deploy/tests/test_deploy_stub.sh`, `deploy/tests/test_release_stub.sh`), and Python syntax verification on `deploy/smoke_test.py`.
 - **Container Build Gate:** Builds the unified multi-stage `Dockerfile` and asserts the image runs as non-root user `node`.
 
+---
+
+## 9. Repeatable Release & Rollback Procedure (Issue 17 / Episode 7 — R-07, R-08)
+
+All production releases to Google Cloud Run (`sda0ec11f`) are executed exclusively from `main` via `.github/workflows/deploy.yml` (**Deploy demo**) using keyless Workload Identity Federation (`sda0ec11f-deployer@cpe-se-course-2026.iam.gserviceaccount.com`):
+
+### 9.1 Standard Release Flow
+1. Create a feature branch from an up-to-date `lab-5-staging` branch and open a Pull Request into `lab-5-staging` with label `lab5`.
+2. Wait for `CI (Tests & Docker) / test-and-docker` to pass and obtain peer review approval from your teammate. Merge into `lab-5-staging`.
+3. Open a Release Pull Request from `lab-5-staging` into `main` (protected by the `protect-main` ruleset requiring 1 approval, up-to-date branch, and passing `test-and-docker`).
+4. Once approved and merged into `main`, **Deploy demo** triggers automatically:
+   - Re-runs `ci-docker.yml` (`test-and-docker`).
+   - Authenticates to GCP via WIF (`environment: demo`).
+   - Builds and pushes `asia-southeast1-docker.pkg.dev/cpe-se-course-2026/sda0ec11f/sda0ec11f:<40-char-commit-SHA>`.
+   - Executes `deploy/release.sh`: resolves the immutable `@sha256` digest, runs Cloud Run migration job `sda0ec11f-migrate`, updates Cloud Run service `sda0ec11f`, and routes 100% traffic to the latest revision.
+   - Runs `python3 deploy/smoke_test.py "$SERVICE_URL"` against `/api/health`, `/api/ready`, and `/`.
+
+### 9.2 Identifying the Currently Running Commit (R-08)
+- Open the latest successful **Deploy demo** run Summary on GitHub Actions to read the **Commit image tag** (40-char SHA) and **Digest** (`@sha256:...`).
+- Cross-verify against Google Cloud Console -> **Cloud Run -> `sda0ec11f` -> Revisions** (active 100% traffic revision image digest) and **Artifact Registry -> `sda0ec11f`** (tag matching the full commit SHA).
+
+### 9.3 Rollback & Roll-Forward Procedure
+1. Open **GitHub Actions -> Deploy demo -> Run workflow** on branch `main`.
+2. Paste the full 40-character commit SHA of the target prior release (for rollback) or newer release (for roll-forward) into `image_tag`, then click **Run workflow**.
+3. The pipeline skips tests, build, and database migration (`ROLLBACK=true`), resolves the existing image digest in Artifact Registry, updates Cloud Run to serve that digest, and verifies health with `deploy/smoke_test.py`.
+
+
 
 
