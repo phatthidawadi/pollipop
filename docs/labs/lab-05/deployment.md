@@ -64,3 +64,19 @@ The application configuration strictly decouples code from environment secrets a
 - [x] Team membership verified on CPE334 Student Cloud Portal
 - [x] Public Cloud Run service ingress verified
 
+---
+
+## 6. Application Cloud-Readiness Contracts (Issue 12 / Episode 2)
+
+Pollipop has been refactored to satisfy all 6 Cloud-Ready runtime contracts for stateless execution on Google Cloud Run with Google Cloud SQL (PostgreSQL 16):
+
+| # | Cloud-Ready Contract | Implementation in Pollipop | Source Reference |
+|---|---|---|---|
+| 1 | **Stateless Container & External Persistence** | All user sessions (`Session` table), surveys, and responses persist in PostgreSQL; zero local disk/SQLite state (`dev.db` fallback removed). | `server/prisma/schema.prisma`, `server/src/prisma.ts` |
+| 2 | **PostgreSQL Schema & Migrations** | Prisma datasource migrated to `postgresql` with PostgreSQL-native DDL (`TIMESTAMP(3)`, explicit primary/foreign key constraints) for `prisma migrate deploy`. | `server/prisma/migrations/20261110000000_init/migration.sql` |
+| 3 | **Dynamic Port & `0.0.0.0` Binding** | Server binds to `HOST=0.0.0.0` and reads `process.env.PORT` (default `3000`) to satisfy Cloud Run container ingress requirements. | `server/src/index.ts` |
+| 4 | **HTTPS Reverse-Proxy Trust & Single-Origin Serving** | Configured `app.set('trust proxy', 1)` for `Secure` `HttpOnly` cookies behind Cloud Run TLS termination, env-driven `CORS_ORIGIN`, and static SPA serving from `client/dist`. | `server/src/app.ts` |
+| 5 | **Liveness, Readiness & Graceful Shutdown** | `GET /api/health` (HTTP 200) and `GET /api/ready` (`SELECT 1` DB ping → 200/503) plus `SIGTERM`/`SIGINT` handlers closing HTTP server and Prisma connections cleanly. | `server/src/app.ts`, `server/src/index.ts` |
+| 6 | **12-Factor Environment & Secret Hygiene** | All secrets (`DATABASE_URL`, `SESSION_SECRET`, `ADMIN_PASSWORD`, `DEMO_USER_PASSWORD`) injected via environment variables/Secret Manager; documented with safe placeholders only. | `.env.example`, `server/.env.example`, `server/prisma/seed.ts` |
+
+
