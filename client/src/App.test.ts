@@ -93,4 +93,8 @@ describe('Feature F-01..F-04: Client UI Architecture & Logic Tests (Issue #9)', 
     handlePageShow(true);
     expect(refreshed).toBe(true);
   });
+
+  it('Checkpoint C-02: intentional failure to prove protect-main merge gate blocks failing CI', () => {
+    expect('merge-gate-proof').toBe('intentional-failure');
+  });
 });
