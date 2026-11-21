@@ -2,8 +2,10 @@ import { prisma } from '../src/prisma';
 import bcrypt from 'bcryptjs';
 
 export async function seedDatabase() {
-  const seedPassword = process.env.DEMO_USER_PASSWORD || 'ChangeMeInDev123!';
-  const passwordHash = await bcrypt.hash(seedPassword, 10);
+  const demoPassword = process.env.DEMO_USER_PASSWORD || 'ChangeMeInDev123!';
+  const adminPassword = process.env.ADMIN_PASSWORD || demoPassword;
+  const demoPasswordHash = await bcrypt.hash(demoPassword, 10);
+  const adminPasswordHash = await bcrypt.hash(adminPassword, 10);
 
   const testAccounts = [
     {
@@ -48,13 +50,14 @@ export async function seedDatabase() {
 
   const users: Record<string, any> = {};
   for (const account of testAccounts) {
+    const accountPasswordHash = account.role === 'OWNER' ? adminPasswordHash : demoPasswordHash;
     const user = await prisma.user.upsert({
       where: { email: account.email },
       update: {
         name: account.name,
         role: account.role,
         department: account.department,
-        passwordHash,
+        passwordHash: accountPasswordHash,
         isActive: true,
       },
       create: {
@@ -62,7 +65,7 @@ export async function seedDatabase() {
         name: account.name,
         role: account.role,
         department: account.department,
-        passwordHash,
+        passwordHash: accountPasswordHash,
         isActive: true,
       },
     });
