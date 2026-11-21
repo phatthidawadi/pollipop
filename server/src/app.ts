@@ -1,4 +1,6 @@
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import bcrypt from 'bcryptjs';
@@ -10,9 +12,17 @@ import { responseRouter } from './routes/response.routes';
 
 export const app = express();
 
+// Trust the first reverse-proxy hop (Google Cloud Run HTTPS termination)
+// so secure session cookies and req.protocol work accurately in production.
+app.set('trust proxy', 1);
+
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map((origin) => origin.trim()).filter(Boolean)
+  : [];
+
 app.use(
   cors({
-    origin: true,
+    origin: allowedOrigins.length > 0 ? allowedOrigins : true,
     credentials: true,
   })
 );
@@ -142,6 +152,24 @@ app.use('/api/surveys', surveyRouter);
 
 // F-03: Response Inspection Routes
 app.use('/api/responses', responseRouter);
+
+// Serve built React SPA static assets in single-container production deployments
+const clientDistCandidates = [
+  path.resolve(__dirname, '../../client/dist'),
+  path.resolve(process.cwd(), 'client/dist'),
+  path.resolve(process.cwd(), '../client/dist'),
+];
+const clientDistDir = clientDistCandidates.find((dir) => fs.existsSync(path.join(dir, 'index.html')));
+
+if (clientDistDir) {
+  app.use(express.static(clientDistDir));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
+    return res.sendFile(path.join(clientDistDir, 'index.html'));
+  });
+}
 
 // NFR-04: Global Standardized Error Handling Middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

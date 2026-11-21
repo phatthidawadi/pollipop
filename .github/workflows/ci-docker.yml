@@ -1,0 +1,106 @@
+# ##############################################################################
+# CI Quality Gate — Tests, Deployment Script Validation, and Docker Build
+# ##############################################################################
+# DO NOT RENAME job `test-and-docker`:
+#   - Called by `.github/workflows/deploy.yml` via `workflow_call`
+#   - Required status check in `protect-main` branch ruleset
+# ##############################################################################
+
+name: CI (Tests & Docker)
+
+on:
+  pull_request:
+    branches: [main, lab-5-staging]
+  push:
+    branches: [main, lab-5-staging]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-docker-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-docker:
+    name: test-and-docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: pollipop
+          POSTGRES_PASSWORD: pollipop_ci_password
+          POSTGRES_DB: pollipop_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U pollipop -d pollipop_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DATABASE_URL: postgresql://pollipop:pollipop_ci_password@localhost:5432/pollipop_test?schema=public
+      SESSION_SECRET: ci-test-session-secret-not-for-production
+      ADMIN_PASSWORD: ChangeMeInDev123!
+      DEMO_USER_PASSWORD: ChangeMeInDev123!
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: |
+            server/package-lock.json
+            client/package-lock.json
+
+      - name: Install server and client dependencies
+        run: |
+          npm --prefix server ci
+          npm --prefix client ci
+
+      - name: Generate Prisma client, deploy PostgreSQL migrations, and verify idempotent seed CLI
+        run: |
+          npm --prefix server run prisma:generate
+          npm --prefix server run prisma:migrate
+          npm --prefix server run prisma:seed
+          SEED_DEMO_DATA=true npm --prefix server run prisma:seed
+
+      - name: Run server integration tests (PostgreSQL)
+        run: npm --prefix server test
+
+      - name: Run client unit tests
+        run: npm --prefix client test
+
+      - name: Build server and client production bundles
+        run: |
+          npm --prefix server run build
+          npm --prefix client run build
+
+      - name: Validate deployment scripts and smoke test offline
+        run: |
+          chmod +x deploy/deploy.sh deploy/release.sh deploy/tests/test_deploy_stub.sh deploy/tests/test_release_stub.sh
+          bash -n deploy/deploy.sh deploy/release.sh
+          DRY_RUN=1 bash deploy/deploy.sh
+          bash deploy/tests/test_deploy_stub.sh
+          bash deploy/tests/test_release_stub.sh
+          python3 -m py_compile deploy/smoke_test.py
+          python3 -m unittest discover -s deploy/tests -p 'test_smoke.py' -v
+
+      - name: Build unified production Docker image and verify non-root user
+        run: |
+          docker build --tag pollipop:ci .
+          IMAGE_USER="$(docker image inspect --format '{{.Config.User}}' pollipop:ci)"
+          echo "Container runtime user: ${IMAGE_USER}"
+          test "$IMAGE_USER" = "node"

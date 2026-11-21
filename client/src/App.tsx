@@ -468,16 +468,6 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const fillDemoAccount = (role: 'owner' | 'student') => {
-    if (role === 'owner') {
-      setEmail('owner1@pollipop.local');
-      setPassword('ChangeMeInDev123!');
-    } else {
-      setEmail('student1@pollipop.local');
-      setPassword('ChangeMeInDev123!');
-    }
-  };
-
   return (
     <div className="container" style={{ maxWidth: 480, marginTop: '2.5rem' }}>
       <div className="card" style={{ position: 'relative' }}>
@@ -536,28 +526,6 @@ const LoginPage: React.FC = () => {
             {submitting ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ'}
           </button>
         </form>
-
-        <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-subtle)', textAlign: 'center' }}>
-          <span style={{ fontSize: '0.84rem', color: 'var(--text-muted)' }}>คลิกเพื่อกรอกบัญชีสาธิตอัตโนมัติ:</span>
-          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginTop: '0.5rem' }}>
-            <button
-              type="button"
-              className="btn btn-outline"
-              style={{ fontSize: '0.82rem', padding: '0.35rem 0.75rem' }}
-              onClick={() => fillDemoAccount('owner')}
-            >
-              อาจารย์ (Owner 1)
-            </button>
-            <button
-              type="button"
-              className="btn btn-outline"
-              style={{ fontSize: '0.82rem', padding: '0.35rem 0.75rem' }}
-              onClick={() => fillDemoAccount('student')}
-            >
-              นักศึกษา (Student 1)
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

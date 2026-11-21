@@ -8,7 +8,9 @@ export default defineConfig({
     include: ['tests/**/*.test.ts', 'tests/*.test.ts', 'src/**/*.test.ts'],
     env: {
       NODE_ENV: 'test',
-      DATABASE_URL: 'file:./test.db',
+      DATABASE_URL:
+        process.env.DATABASE_URL ||
+        'postgresql://pollipop:pollipop@localhost:5432/pollipop_test?schema=public',
     },
   },
 });
