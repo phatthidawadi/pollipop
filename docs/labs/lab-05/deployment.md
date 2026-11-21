@@ -79,4 +79,25 @@ Pollipop has been refactored to satisfy all 6 Cloud-Ready runtime contracts for 
 | 5 | **Liveness, Readiness & Graceful Shutdown** | `GET /api/health` (HTTP 200) and `GET /api/ready` (`SELECT 1` DB ping → 200/503) plus `SIGTERM`/`SIGINT` handlers closing HTTP server and Prisma connections cleanly. | `server/src/app.ts`, `server/src/index.ts` |
 | 6 | **12-Factor Environment & Secret Hygiene** | All secrets (`DATABASE_URL`, `SESSION_SECRET`, `ADMIN_PASSWORD`, `DEMO_USER_PASSWORD`) injected via environment variables/Secret Manager; documented with safe placeholders only. | `.env.example`, `server/.env.example`, `server/prisma/seed.ts` |
 
+---
+
+## 7. Container Architecture & Multi-Stage Packaging (Issue 13 / Episode 3)
+
+Pollipop is packaged with Docker adhering to least-privilege non-root execution and production multi-stage optimization:
+
+### 7.1 Container Topology & Local Orchestration
+
+| Service | Image / Build Context | Container Name | Port Mapping | Purpose |
+|---|---|---|---|---|
+| `db` | `postgres:16-alpine` | `pollipop-db` | `5432:5432` | Persistent PostgreSQL 16 database with volume `postgres_data` |
+| `migrate` | `./server/Dockerfile` | `pollipop-migrate` | N/A | One-shot initialization: runs `prisma migrate deploy` and `seed.ts` |
+| `server` | `./server/Dockerfile` | `pollipop-server` | `3000:3000` | Express API runtime listening on port `3000` as non-root `node` |
+| `client` | `./client/Dockerfile` | `pollipop-client` | `5173:80` | Nginx reverse-proxy serving Vite React SPA and proxying `/api` |
+
+### 7.2 Production Multi-Stage Container (`Dockerfile`)
+- **Stage 1 (`client-builder`):** Compiles Vite React SPA (`npm run build`) into production static assets (`/app/client/dist`).
+- **Stage 2 (`server-builder`):** Generates Prisma client (`prisma generate`) and compiles TypeScript (`tsc`) into CommonJS bytecode (`dist/`).
+- **Stage 3 (`production`):** Minimal `node:24-alpine` runtime copying only compiled artifacts, running as unprivileged user `node` on port `3000` with `./docker-entrypoint.sh`.
+
+
 
