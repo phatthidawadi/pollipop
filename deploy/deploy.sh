@@ -152,6 +152,10 @@ fi
 
 # ==============================================================================
 # 11. Deploy Cloud Run Service (Port 3000 matches root Dockerfile)
+#     Note on SESSION_SECRET: Pollipop persists opaque session IDs in PostgreSQL
+#     (Session table). Portal slot `sda0ec11f-app-secret-1` is reserved for
+#     optional signed-cookie hardening once populated via `./kit.sh secrets add 1`,
+#     so it is intentionally not mounted here until a secret version exists.
 # ==============================================================================
 run_cmd gcloud run services update "$SERVICE_NAME" \
   --image "$IMAGE_URI" \

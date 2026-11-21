@@ -50,7 +50,7 @@ The application configuration strictly decouples code from environment secrets a
 | `NODE_ENV` | Production & Local | Application runtime environment (`development` / `production`) | Environment Variable |
 | `PORT` | Production & Local | Port to bind server (`3000` default, dynamically injected by Cloud Run) | Environment Variable |
 | `DATABASE_URL` | Production & Local | PostgreSQL connection string (Unix domain socket in production) | Secret Manager (`sda0ec11f-database-url`) |
-| `SESSION_SECRET` | Production & Local | Cookie signing secret for session persistence | Secret Manager (`sda0ec11f-app-secret-1`) |
+| `SESSION_SECRET` | Optional (Reserved) | Optional cookie signing secret (Pollipop uses DB-backed opaque session IDs; not mounted in `deploy.sh` until populated via `./kit.sh secrets add 1`) | Secret Manager (`sda0ec11f-app-secret-1`, optional) |
 | `ADMIN_PASSWORD` | Production & Local | Initial seed administrative account password | Secret Manager (`sda0ec11f-admin-password`) |
 | `DEMO_USER_PASSWORD` | Production & Local | Password for seeded demonstration accounts | Secret Manager (`sda0ec11f-demo-password`) |
 | `CORS_ORIGIN` | Production & Local | Permitted CORS origins for API requests | Environment Variable |

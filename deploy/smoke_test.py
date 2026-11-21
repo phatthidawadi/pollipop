@@ -5,7 +5,7 @@ Usage:
     python3 deploy/smoke_test.py <SERVICE_URL>
 
 Optional Environment Variables (set BOTH or neither):
-    SMOKE_EMAIL     Email of a seeded account (e.g. owner1@pollipop.local)
+    SMOKE_EMAIL     Email of a low-privilege RESPONDENT account (e.g. student1@pollipop.local)
     SMOKE_PASSWORD  Password for the account above
 
 Checks:
