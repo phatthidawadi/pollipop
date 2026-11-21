@@ -46,7 +46,7 @@ services:
       migrate:
         condition: service_completed_successfully
     environment:
-      NODE_ENV: production
+      NODE_ENV: ${NODE_ENV:-development}
       TZ: Asia/Bangkok
       PORT: 3000
       DATABASE_URL: postgresql://${POSTGRES_USER:-pollipop}:${POSTGRES_PASSWORD:-pollipop}@db:5432/${POSTGRES_DB:-pollipop}?schema=public
@@ -54,6 +54,11 @@ services:
       CORS_ORIGIN: "http://localhost:5173"
     ports:
       - "3000:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   client:
     build:
@@ -64,9 +69,11 @@ services:
     container_name: pollipop-client
     restart: unless-stopped
     depends_on:
-      - server
+      server:
+        condition: service_healthy
     ports:
       - "5173:80"
 
 volumes:
   postgres_data:
+

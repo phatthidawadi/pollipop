@@ -15,7 +15,7 @@ COPY tsconfig.json ./
 COPY src ./src/
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 
-RUN npm run build && chmod +x ./docker-entrypoint.sh
+RUN npm run build && sed -i 's/\r$//' ./docker-entrypoint.sh && chmod +x ./docker-entrypoint.sh
 
 ENV NODE_ENV=production
 ENV TZ=Asia/Bangkok
@@ -26,3 +26,4 @@ USER node
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["node", "dist/index.js"]
+

@@ -46,7 +46,10 @@ FROM node:24-alpine AS production
 WORKDIR /app/server
 RUN apk add --no-cache openssl
 
-# Copy server runtime dependencies and compiled build
+# Copy server runtime dependencies, compiled build, and migration/seed tooling.
+# Note: Full node_modules (including prisma CLI and tsx) and src/ are intentionally
+# retained because this unified image is shared by both the Cloud Run web service
+# and the Cloud Run migration job (`npx prisma migrate deploy && npm run prisma:seed`).
 COPY --from=server-builder /app/server/package*.json ./
 COPY --from=server-builder /app/server/node_modules ./node_modules
 COPY --from=server-builder /app/server/dist ./dist
@@ -57,7 +60,8 @@ COPY --from=server-builder /app/server/docker-entrypoint.sh ./docker-entrypoint.
 # Copy built React frontend to be statically served by Express
 COPY --from=client-builder /app/client/dist /app/client/dist
 
-RUN chmod +x ./docker-entrypoint.sh
+# Normalize CRLF line endings (Windows checkouts) and make entrypoint executable
+RUN sed -i 's/\r$//' ./docker-entrypoint.sh && chmod +x ./docker-entrypoint.sh
 
 # Runtime environment settings
 ENV NODE_ENV=production
@@ -71,3 +75,4 @@ USER node
 # Start command
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["node", "dist/index.js"]
+
