@@ -136,6 +136,37 @@ All production releases to Google Cloud Run (`sda0ec11f`) are executed exclusive
 2. Paste the full 40-character commit SHA of the target prior release (for rollback) or newer release (for roll-forward) into `image_tag`, then click **Run workflow**.
 3. The pipeline skips tests, build, and database migration (`ROLLBACK=true`), resolves the existing image digest in Artifact Registry, updates Cloud Run to serve that digest, and verifies health with `deploy/smoke_test.py`.
 
+---
+
+## 10. Data Persistence, Rollback & Roll-Forward Verification Log (Issue 18 / Episode 8)
+
+Live verification was executed against `https://sda0ec11f-4d7hbszvwq-as.a.run.app` (Cloud Run `sda0ec11f` connected to Cloud SQL PostgreSQL `sda0ec11f-pg`) using two immutable commit-SHA images stored in Artifact Registry:
+
+| Stage | Action / Trigger | Target Commit SHA (`image_tag`) | GitHub Actions Run | Live SPA Bundle | `(Release 2)` Visible | Live Smoke Test (`/api/health`, `/api/ready`, `/`) |
+|---|---|---|---|---|---|---|
+| **Release A** | Auto-deploy (`push` to `main`, PR #37) | `6b9821c1651f69ef4d3b5f1b16f7bba206da6563` | [`#44945262105`](https://github.com/phatthidawadi/pollipop/actions/runs/44945262105) (✅ success) | `/assets/index-yRFRucEu.js` | `False` | PASS (HTTP 200, `db=connected`) |
+| **Release B** | Auto-deploy (`push` to `main`, PR #39 / C-06) | `c32283750945d4d07e641868ee5d81e32b2f4888` | [`#44947414079`](https://github.com/phatthidawadi/pollipop/actions/runs/44947414079) (✅ success) | `/assets/index-D4qqVP1v.js` | `True` | PASS (HTTP 200, `db=connected`) |
+| **Rollback** | Manual `workflow_dispatch` (`ROLLBACK=true`) | `6b9821c1651f69ef4d3b5f1b16f7bba206da6563` | [`#44954048929`](https://github.com/phatthidawadi/pollipop/actions/runs/44954048929) (✅ success, 40s) | `/assets/index-yRFRucEu.js` | `False` | PASS (HTTP 200, `db=connected`) |
+| **Roll-Forward** | Manual `workflow_dispatch` (`ROLLBACK=true`) | `c32283750945d4d07e641868ee5d81e32b2f4888` | [`#44954675642`](https://github.com/phatthidawadi/pollipop/actions/runs/44954675642) (✅ success) | `/assets/index-D4qqVP1v.js` | `True` | PASS (HTTP 200, `db=connected`) |
+
+### Key Resilience Observations
+- **Zero-Rebuild & Non-Destructive Rollback:** Both Rollback (`#44954048929`) and Roll-Forward (`#44954675642`) skipped `test`, `Build and push image`, and Cloud Run migration (`sda0ec11f-migrate`), resolving the existing immutable `@sha256` digest directly from Artifact Registry and completing in ~40 seconds.
+- **Database Durability Across Revisions:** All relational records stored in Cloud SQL (`sda0ec11f-pg`) remained intact across both revision transitions with zero downtime and passing `/api/ready` (`db=connected`) probes.
+
+---
+
+## 11. Lab 5 Final Checkpoint Sign-Off (C-01 through C-06)
+
+| Checkpoint | Description | Verification Artifact / Evidence | Status |
+|---|---|---|---|
+| **C-01** | Cloud-Ready Architecture & Multi-Stage Non-Root Container | PR #31 (PostgreSQL, `trust proxy`, graceful shutdown, `.env.example`s) & PR #32 (Multi-stage `Dockerfile`, `USER node`, `docker-compose.yml`) | ✅ Verified |
+| **C-02** | CI Quality Gate & Blocked Merge Gate on `main` | PR #33 (`ci-docker.yml` job `test-and-docker`), `protect-main` ruleset, and closed throwaway PR #35 (`test/prove-gate` blocked with red check) | ✅ Verified |
+| **C-03** | Initial Production Deployment & Live Smoke Probes | Release PR #34 merged to `main`, deployed to `https://sda0ec11f-4d7hbszvwq-as.a.run.app`, `deploy/smoke_test.py` passing | ✅ Verified |
+| **C-04** | Keyless WIF Authentication (Zero JSON Keys) | GitHub Environment `demo` restricted to `main` with `GCP_PROJECT_ID`, `GCP_REGION`, `WIF_PROVIDER`, `WIF_SERVICE_ACCOUNT` and zero secret keys (Issue #27) | ✅ Verified |
+| **C-05** | Data Persistence & Non-Destructive Rollback / Roll-Forward | Live Rollback Run `#44954048929` (Release B -> A) & Roll-Forward Run `#44954675642` (Release A -> B) with Cloud SQL durability verified (Issue #29) | ✅ Verified |
+| **C-06** | Repeatable Automated Release Pipeline on `main` Merge | PR #36 (`deploy.yml`), Release A PR #37 (`#44945262105`), visible UI change PR #38 (`feature/deploy-proof`), Release B PR #39 (`#44947414079`) | ✅ Verified |
+
+
 
 
 
