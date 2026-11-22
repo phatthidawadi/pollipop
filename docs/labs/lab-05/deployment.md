@@ -136,6 +136,65 @@ All production releases to Google Cloud Run (`sda0ec11f`) are executed exclusive
 2. Paste the full 40-character commit SHA of the target prior release (for rollback) or newer release (for roll-forward) into `image_tag`, then click **Run workflow**.
 3. The pipeline skips tests, build, and database migration (`ROLLBACK=true`), resolves the existing image digest in Artifact Registry, updates Cloud Run to serve that digest, and verifies health with `deploy/smoke_test.py`.
 
+---
+
+## 10. Data Persistence, Rollback & Roll-Forward Verification Log (Issue 18 / Episode 8)
+
+Live verification was executed against `https://sda0ec11f-4d7hbszvwq-as.a.run.app` (Cloud Run `sda0ec11f` connected to Cloud SQL PostgreSQL `sda0ec11f-pg`) using two immutable commit-SHA images stored in Artifact Registry:
+
+| Stage | Action / Trigger | Target Commit SHA (`image_tag`) | GitHub Actions Run | Live SPA Bundle | `(Release 2)` Visible | Live Smoke Test (`/api/health`, `/api/ready`, `/`) |
+|---|---|---|---|---|---|---|
+| **Release A** | Auto-deploy (`push` to `main`, PR #37) | `6b9821c1651f69ef4d3b5f1b16f7bba206da6563` | [`#44945262105`](https://github.com/phatthidawadi/pollipop/actions/runs/44945262105) (✅ success) | `/assets/index-yRFRucEu.js` | `False` | PASS (HTTP 200, `db=connected`) |
+| **Release B** | Auto-deploy (`push` to `main`, PR #39 / C-06) | `c32283750945d4d07e641868ee5d81e32b2f4888` | [`#44947414079`](https://github.com/phatthidawadi/pollipop/actions/runs/44947414079) (✅ success) | `/assets/index-D4qqVP1v.js` | `True` | PASS (HTTP 200, `db=connected`) |
+| **Rollback** | Manual `workflow_dispatch` (`ROLLBACK=true`) | `6b9821c1651f69ef4d3b5f1b16f7bba206da6563` | [`#44954048929`](https://github.com/phatthidawadi/pollipop/actions/runs/44954048929) (✅ success, 40s) | `/assets/index-yRFRucEu.js` | `False` | PASS (HTTP 200, `db=connected`) |
+| **Roll-Forward** | Manual `workflow_dispatch` (`ROLLBACK=true`) | `c32283750945d4d07e641868ee5d81e32b2f4888` | [`#44954675642`](https://github.com/phatthidawadi/pollipop/actions/runs/44954675642) (✅ success) | `/assets/index-D4qqVP1v.js` | `True` | PASS (HTTP 200, `db=connected`) |
+
+### Key Resilience Observations & C-05 Domain Record Persistence
+- **Zero-Rebuild & Non-Destructive Rollback:** Both Rollback (`#44954048929`) and Roll-Forward (`#44954675642`) skipped `test`, `Build and push image`, and Cloud Run migration (`sda0ec11f-migrate`), resolving the existing immutable `@sha256` digest directly from Artifact Registry and completing in ~40 seconds.
+- **External Cloud SQL Durability (C-05 / R-04):** Because Pollipop persists all domain entities (`User`, `Session`, `Survey`, `Question`, `ChoiceOption`, `Response`, `Answer`, `SurveyParticipation`) exclusively in Google Cloud SQL (`sda0ec11f-pg`) rather than ephemeral container storage, domain survey and response records created on the live production URL (`https://sda0ec11f-4d7hbszvwq-as.a.run.app`) remained 100% intact before Rollback (Release B), after Rollback (Release A, `#44954048929`), and after Roll-Forward (Release B, `#44954675642`), verified alongside passing `/api/ready` (`db=connected`) probes and zero data loss across container revision swaps.
+
+---
+
+## 11. Technology Stack Summary & Operational Commands (Handout Section 4.3)
+
+### 11.1 Technology Stack & Course-Managed GCP Adaptation
+- **Runtime & Backend:** Node.js 24 (`node:24-alpine`), Express 4, TypeScript 5, Zod validation, `bcryptjs`, database-backed HTTP-only cookie sessions (`pollipop_sid`).
+- **Frontend:** React 18, TypeScript, Vite 6 (compiled into `/app/client/dist` and served by Express on port `3000` in production).
+- **ORM & Database:** Prisma 6 (`@prisma/client`) connected to **PostgreSQL 16** (`postgres:16-alpine` locally/CI; Google Cloud SQL `sda0ec11f-pg` via Unix socket in production).
+- **Testing & Quality Gate:** Vitest + Supertest (38 server integration tests, 7 client unit tests), Bash offline stub tests (`deploy/tests/`), Python 3 stdlib `smoke_test.py` + `unittest`.
+- **Course-Managed GCP Adaptation:** Instead of provisioning a personal Free Trial GCP project/billing alert, this team operates on the course-managed shared project **`cpe-se-course-2026`** (region `asia-southeast1`) provisioned via the CPE334 Student Cloud Portal under team prefix **`sda0ec11f`** (pre-provisioned Cloud SQL, Cloud Run service/job, Artifact Registry, Secret Manager, and keyless WIF deployer identity).
+
+### 11.2 Build, Test, Run, Migrate, and Seed Commands
+
+| Operation | Command | Purpose / Notes |
+|---|---|---|
+| **Install dependencies** | `npm --prefix server ci && npm --prefix client ci` | Clean lockfile-pinned install for backend & frontend |
+| **Generate Prisma client** | `npm --prefix server run prisma:generate` | Generates PostgreSQL `@prisma/client` from `server/prisma/schema.prisma` |
+| **Apply DB migrations** | `npm --prefix server run prisma:migrate` | Runs `prisma migrate deploy` (safe non-destructive DDL for CI & Cloud SQL) |
+| **Seed database (idempotent)** | `npm --prefix server run prisma:seed` | Upserts base accounts; set `SEED_DEMO_DATA=true` to also seed sample surveys/responses |
+| **Run backend tests** | `npm --prefix server test` | Runs all 38 Vitest integration tests against PostgreSQL |
+| **Run frontend tests** | `npm --prefix client test` | Runs all 7 Vitest client unit tests |
+| **Build production bundles** | `npm run build` | Builds Vite React SPA (`client/dist`) and compiles Express server (`server/dist`) |
+| **Run locally with Docker Compose** | `docker compose up --build` | Starts PostgreSQL 16, runs migration+seed job, Express (`:3000`), and Nginx SPA (`:5173`) |
+| **Build unified production image** | `docker build --platform linux/amd64 -t pollipop:local .` | Multi-stage image (`node:24-alpine`, non-root `USER node`, port `3000`) |
+| **Offline deploy script tests** | `bash deploy/tests/test_deploy_stub.sh && bash deploy/tests/test_release_stub.sh && python3 -m unittest discover -s deploy/tests -p 'test_smoke.py' -v` | Validates `deploy.sh`, `release.sh`, and `smoke_test.py` without GCP calls |
+| **Dry-run GCP deploy** | `DRY_RUN=1 bash deploy/deploy.sh` | Previews all build/migrate/deploy commands for `sda0ec11f` without modifying cloud resources |
+| **Live smoke test** | `python3 deploy/smoke_test.py https://sda0ec11f-4d7hbszvwq-as.a.run.app` | Verifies `/api/health`, `/api/ready`, `/` SPA HTML, and optional low-privilege auth |
+
+---
+
+## 12. Lab 5 Final Checkpoint Sign-Off (Handout Section 8: C-01 through C-06)
+
+| Checkpoint | Rubric Mapping | Handout Definition | Verification Artifact / Evidence | Status |
+|---|---|---|---|---|
+| **C-01** | **R-05** | Normal PR runs build and automated tests and passes | PR #33 (`ci/14-pr-checks`, CI Run `#44939578826`), PR #36, PR #38 (`#44945657864`), and PR #40 (`#44955059827`) all pass `CI (Tests & Docker) / test-and-docker` green | ✅ Verified |
+| **C-02** | **R-06** | Failing PR from temporary branch is blocked by branch protection (`protect-main`) | Throwaway PR #35 (`test/prove-gate` -> `main`) with intentional failing assertion failed `test-and-docker [Required]` and displayed `Merging is blocked`; closed without merging (Issue #27) | ✅ Verified |
+| **C-03** | **R-01, R-02** | Fresh clone builds and runs with Docker + `.env.example` (no hardcoded secrets) | PR #31 (PostgreSQL, `.env.example`, `server/.env.example`, `client/.env.example`, dev shortcuts removed) & PR #32 (Multi-stage `Dockerfile`, `USER node`, `.dockerignore`s, `docker-compose.yml`) | ✅ Verified |
+| **C-04** | **R-03** | Domain workflow on public URL: sign in, main business action, and rule rejection / access restriction | Public Cloud Run service `https://sda0ec11f-4d7hbszvwq-as.a.run.app` serving Pollipop UI & API: authenticated login, survey creation/submission workflow, and RBAC/domain rule rejections (401/403/409) verified alongside `smoke_test.py` | ✅ Verified |
+| **C-05** | **R-04** | Data record created before restart/redeploy/rollback survives afterwards in Cloud SQL | Domain records stored in external Cloud SQL (`sda0ec11f-pg`) verified intact before and after non-destructive Rollback (`#44954048929`: Release B -> A) and Roll-Forward (`#44954675642`: Release A -> B) | ✅ Verified |
+| **C-06** | **R-07..R-10** | Reviewed change deployed to `main` via automated CD with running revision matching commit SHA | PR #36 (`deploy.yml`, WIF `demo` environment), Release A PR #37 (`#44945262105`), visible UI change `feature/deploy-proof` PR #38 -> Release B PR #39 (`#44947414079`) live on `c32283750945d4d07e641868ee5d81e32b2f4888` | ✅ Verified |
+
+
 
 
 
